@@ -36,14 +36,16 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
     >
       {/* Background layers */}
       <div className="absolute inset-0 z-0">
-        <Suspense fallback={null}>
-          <ParticleBackground
-            particleCount={theme.particleCount}
-            accent={theme.accent}
-            background={theme.background}
-            mode={theme.mode}
-          />
-        </Suspense>
+        {!isMobile && (
+          <Suspense fallback={null}>
+            <ParticleBackground
+              particleCount={theme.particleCount}
+              accent={theme.accent}
+              background={theme.background}
+              mode={theme.mode}
+            />
+          </Suspense>
+        )}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
