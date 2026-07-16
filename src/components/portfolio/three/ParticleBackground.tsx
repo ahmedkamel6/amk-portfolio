@@ -3,6 +3,7 @@
 import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 /**
  * Subtle floating particle field + grid lines for the hero background.
@@ -10,7 +11,7 @@ import * as THREE from 'three'
  * Particle count is driven by the admin-controlled theme settings.
  */
 
-function Particles({ count = 600, accentColor = '#00D084' }: { count?: number; accentColor?: string }) {
+function Particles({ count = 600, accentColor = '#00D084', isMobile = false }: { count?: number; accentColor?: string; isMobile?: boolean }) {
   const ref = useRef<THREE.Points>(null)
 
   const { positions, colors, sizes } = useMemo(() => {
@@ -43,7 +44,7 @@ function Particles({ count = 600, accentColor = '#00D084' }: { count?: number; a
   }, [count, accentColor])
 
   useFrame((state, delta) => {
-    if (!ref.current) return
+    if (!ref.current || isMobile) return
     // Slow rotation
     ref.current.rotation.y += delta * 0.03
     ref.current.rotation.x += delta * 0.01
@@ -83,11 +84,11 @@ function Particles({ count = 600, accentColor = '#00D084' }: { count?: number; a
   )
 }
 
-function GridLines({ accentColor = '#00D084' }: { accentColor?: string }) {
+function GridLines({ accentColor = '#00D084', isMobile = false }: { accentColor?: string; isMobile?: boolean }) {
   const ref = useRef<THREE.GridHelper>(null)
 
   useFrame((state) => {
-    if (!ref.current) return
+    if (!ref.current || isMobile) return
     const t = state.clock.elapsedTime
     ref.current.position.z = (t * 0.5) % 2
     const mat = ref.current.material as THREE.Material & { opacity: number }
@@ -111,11 +112,11 @@ function GridLines({ accentColor = '#00D084' }: { accentColor?: string }) {
   )
 }
 
-function MouseLight({ color = '#00D084' }: { color?: string }) {
+function MouseLight({ color = '#00D084', isMobile = false }: { color?: string; isMobile?: boolean }) {
   const ref = useRef<THREE.PointLight>(null)
 
   useFrame((state) => {
-    if (!ref.current) return
+    if (!ref.current || isMobile) return
     const x = (state.pointer.x * 6)
     const y = (state.pointer.y * 4)
     ref.current.position.lerp(new THREE.Vector3(x, y, 4), 0.05)
@@ -144,9 +145,12 @@ export function ParticleBackground({
   background?: string
   mode?: 'dark' | 'light'
 }) {
+  const isMobile = useIsMobile()
+
   return (
     <div className="absolute inset-0 h-full w-full" aria-hidden>
       <Canvas
+        frameloop={isMobile ? 'demand' : 'always'}
         camera={{ position: [0, 0, 8], fov: 60 }}
         gl={{
           antialias: true,
@@ -156,9 +160,9 @@ export function ParticleBackground({
         dpr={[1, 2]}
       >
         <ambientLight intensity={mode === 'dark' ? 0.4 : 0.8} />
-        <MouseLight color={accent} />
-        <Particles count={particleCount} accentColor={accent} />
-        <GridLines accentColor={accent} />
+        <MouseLight color={accent} isMobile={isMobile} />
+        <Particles count={particleCount} accentColor={accent} isMobile={isMobile} />
+        <GridLines accentColor={accent} isMobile={isMobile} />
         <fog attach="fog" args={[background, 8, 25]} />
       </Canvas>
     </div>

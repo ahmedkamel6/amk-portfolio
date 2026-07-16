@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import { ArrowDown, Sparkles } from 'lucide-react'
 import { MagneticButton } from '../MagneticButton'
 import { TextReveal } from '../TextReveal'
+import { useIsMobile } from '@/hooks/use-mobile'
 import type { HeroContent, ThemeSettings } from '@/lib/portfolio/default-content'
 
 const ParticleBackground = lazy(() =>
@@ -14,6 +15,7 @@ const ParticleBackground = lazy(() =>
 
 export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSettings, 'background' | 'accent' | 'accentSoft' | 'particleCount' | 'mode'> }) {
   const ref = useRef<HTMLElement>(null)
+  const isMobile = useIsMobile()
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -57,14 +59,14 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
       <motion.div
         className="pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full opacity-30 blur-3xl"
         style={{ background: 'radial-gradient(circle, var(--emerald-glow), transparent 70%)' }}
-        animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isMobile ? { y: 0, x: 0 } : { y: [0, -30, 0], x: [0, 20, 0] }}
+        transition={isMobile ? {} : { duration: 12, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full opacity-20 blur-3xl"
         style={{ background: 'radial-gradient(circle, var(--accent-soft), transparent 70%)' }}
-        animate={{ y: [0, 40, 0], x: [0, -25, 0] }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isMobile ? { y: 0, x: 0 } : { y: [0, 40, 0], x: [0, -25, 0] }}
+        transition={isMobile ? {} : { duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* Cinematic corner brackets — viewfinder feel */}
@@ -108,7 +110,7 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
       {/* Content */}
       <motion.div
         className="relative z-10 flex flex-col items-center px-6 text-center"
-        style={{ y, opacity, scale }}
+        style={isMobile ? {} : { y, opacity, scale }}
       >
         {/* Available badge */}
         <motion.div
@@ -150,8 +152,8 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
             <motion.span
               className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%]"
               initial={{ backgroundPosition: '200% 0' }}
-              animate={{ backgroundPosition: ['-200% 0', '200% 0'] }}
-              transition={{
+              animate={isMobile ? {} : { backgroundPosition: ['-200% 0', '200% 0'] }}
+              transition={isMobile ? {} : {
                 duration: 4,
                 repeat: Infinity,
                 ease: 'linear',
@@ -249,7 +251,7 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
       {/* Scroll cue — enhanced */}
       <motion.div
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
-        style={{ opacity }}
+        style={isMobile ? {} : { opacity }}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.5, duration: 0.8 }}
@@ -261,8 +263,8 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
           <div className="relative h-10 w-px overflow-hidden bg-[var(--border)]">
             <motion.div
               className="absolute inset-x-0 top-0 h-1/2 bg-emerald-glow"
-              animate={{ y: ['-50%', '150%'] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              animate={isMobile ? {} : { y: ['-50%', '150%'] }}
+              transition={isMobile ? {} : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
             />
           </div>
         </div>
