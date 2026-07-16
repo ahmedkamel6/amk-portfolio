@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, lazy } from 'react'
+import { memo, Suspense, lazy } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { ArrowDown, Sparkles } from 'lucide-react'
@@ -13,7 +13,7 @@ const ParticleBackground = lazy(() =>
   import('../three/ParticleBackground').then((m) => ({ default: m.ParticleBackground }))
 )
 
-export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSettings, 'background' | 'accent' | 'accentSoft' | 'particleCount' | 'mode'> }) {
+export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSettings, 'background' | 'accent' | 'accentSoft' | 'particleCount' | 'mode'> }) {
   const ref = useRef<HTMLElement>(null)
   const isMobile = useIsMobile()
   const { scrollYProgress } = useScroll({
@@ -57,16 +57,16 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
 
       {/* Floating ambient orbs */}
       <motion.div
-        className="pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full opacity-30 blur-3xl"
-        style={{ background: 'radial-gradient(circle, var(--emerald-glow), transparent 70%)' }}
-        animate={isMobile ? { y: 0, x: 0 } : { y: [0, -30, 0], x: [0, 20, 0] }}
-        transition={isMobile ? {} : { duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        className={`pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full ${isMobile ? 'opacity-15 blur-2xl' : 'opacity-30 blur-3xl'}`}
+        style={{ background: 'radial-gradient(circle, var(--emerald-glow), transparent 70%)', willChange: 'transform' }}
+        animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
+        transition={{ duration: isMobile ? 24 : 12, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full opacity-20 blur-3xl"
-        style={{ background: 'radial-gradient(circle, var(--accent-soft), transparent 70%)' }}
-        animate={isMobile ? { y: 0, x: 0 } : { y: [0, 40, 0], x: [0, -25, 0] }}
-        transition={isMobile ? {} : { duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+        className={`pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full hidden md:block opacity-20 blur-3xl`}
+        style={{ background: 'radial-gradient(circle, var(--accent-soft), transparent 70%)', willChange: 'transform' }}
+        animate={{ y: [0, 40, 0], x: [0, -25, 0] }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* Cinematic corner brackets — viewfinder feel */}
@@ -109,8 +109,8 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
 
       {/* Content */}
       <motion.div
-        className="relative z-10 flex flex-col items-center px-6 text-center"
-        style={isMobile ? {} : { y, opacity, scale }}
+        className="relative z-10 flex flex-col items-center px-6 text-center pt-[calc(env(safe-area-inset-top)+80px)] md:pt-0"
+        style={{ y, opacity, scale, willChange: 'transform' }}
       >
         {/* Available badge */}
         <motion.div
@@ -152,9 +152,9 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
             <motion.span
               className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%]"
               initial={{ backgroundPosition: '200% 0' }}
-              animate={isMobile ? {} : { backgroundPosition: ['-200% 0', '200% 0'] }}
-              transition={isMobile ? {} : {
-                duration: 4,
+              animate={{ backgroundPosition: ['-200% 0', '200% 0'] }}
+              transition={{
+                duration: isMobile ? 12 : 4,
                 repeat: Infinity,
                 ease: 'linear',
                 delay: 2,
@@ -251,7 +251,7 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
       {/* Scroll cue — enhanced */}
       <motion.div
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
-        style={isMobile ? {} : { opacity }}
+        style={{ opacity, willChange: 'transform' }}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.5, duration: 0.8 }}
@@ -263,12 +263,13 @@ export function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSett
           <div className="relative h-10 w-px overflow-hidden bg-[var(--border)]">
             <motion.div
               className="absolute inset-x-0 top-0 h-1/2 bg-emerald-glow"
-              animate={isMobile ? {} : { y: ['-50%', '150%'] }}
-              transition={isMobile ? {} : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ y: ['-50%', '150%'] }}
+              transition={{ duration: isMobile ? 4.8 : 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ willChange: 'transform' }}
             />
           </div>
         </div>
       </motion.div>
     </section>
   )
-}
+})

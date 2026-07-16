@@ -44,12 +44,13 @@ function Particles({ count = 600, accentColor = '#00D084', isMobile = false }: {
   }, [count, accentColor])
 
   useFrame((state, delta) => {
-    if (!ref.current || isMobile) return
+    if (!ref.current) return
+    const speedMult = isMobile ? 0.3 : 1
     // Slow rotation
-    ref.current.rotation.y += delta * 0.03
-    ref.current.rotation.x += delta * 0.01
+    ref.current.rotation.y += delta * 0.03 * speedMult
+    ref.current.rotation.x += delta * 0.01 * speedMult
     // Subtle bobbing
-    ref.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2
+    ref.current.position.y = Math.sin(state.clock.elapsedTime * 0.3 * speedMult) * 0.2
   })
 
   return (
@@ -88,11 +89,12 @@ function GridLines({ accentColor = '#00D084', isMobile = false }: { accentColor?
   const ref = useRef<THREE.GridHelper>(null)
 
   useFrame((state) => {
-    if (!ref.current || isMobile) return
+    if (!ref.current) return
     const t = state.clock.elapsedTime
-    ref.current.position.z = (t * 0.5) % 2
+    const speedMult = isMobile ? 0.3 : 1
+    ref.current.position.z = (t * 0.5 * speedMult) % 2
     const mat = ref.current.material as THREE.Material & { opacity: number }
-    mat.opacity = 0.15 + Math.sin(t * 0.5) * 0.05
+    mat.opacity = 0.15 + Math.sin(t * 0.5 * speedMult) * 0.05
   })
 
   return (
@@ -116,10 +118,14 @@ function MouseLight({ color = '#00D084', isMobile = false }: { color?: string; i
   const ref = useRef<THREE.PointLight>(null)
 
   useFrame((state) => {
-    if (!ref.current || isMobile) return
-    const x = (state.pointer.x * 6)
-    const y = (state.pointer.y * 4)
-    ref.current.position.lerp(new THREE.Vector3(x, y, 4), 0.05)
+    if (!ref.current) return
+    if (isMobile) {
+      ref.current.position.lerp(new THREE.Vector3(0, 0, 4), 0.02)
+    } else {
+      const x = (state.pointer.x * 6)
+      const y = (state.pointer.y * 4)
+      ref.current.position.lerp(new THREE.Vector3(x, y, 4), 0.05)
+    }
   })
 
   return (
@@ -127,7 +133,7 @@ function MouseLight({ color = '#00D084', isMobile = false }: { color?: string; i
       ref={ref}
       position={[0, 0, 4]}
       color={color}
-      intensity={4}
+      intensity={isMobile ? 2 : 4}
       distance={20}
       decay={2}
     />
@@ -150,18 +156,17 @@ export function ParticleBackground({
   return (
     <div className="absolute inset-0 h-full w-full" aria-hidden>
       <Canvas
-        frameloop={isMobile ? 'demand' : 'always'}
         camera={{ position: [0, 0, 8], fov: 60 }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
         }}
-        dpr={[1, 2]}
+        dpr={isMobile ? [1, 1] : [1, 2]}
       >
-        <ambientLight intensity={mode === 'dark' ? 0.4 : 0.8} />
+        <ambientLight intensity={mode === 'dark' ? (isMobile ? 0.2 : 0.4) : (isMobile ? 0.6 : 0.8)} />
         <MouseLight color={accent} isMobile={isMobile} />
-        <Particles count={particleCount} accentColor={accent} isMobile={isMobile} />
+        <Particles count={isMobile ? Math.floor(particleCount / 3) : particleCount} accentColor={accent} isMobile={isMobile} />
         <GridLines accentColor={accent} isMobile={isMobile} />
         <fog attach="fog" args={[background, 8, 25]} />
       </Canvas>
