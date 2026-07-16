@@ -13,7 +13,7 @@ export function Contact({ contact, index = '09' }: { contact: ContactContent, in
   const inView = useInView(ref, { once: true, amount: 0.3 })
 
   return (
-    <section id="contact" ref={ref} className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48">
+    <section id="contact" ref={ref} className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48 contain-paint" style={{ contentVisibility: 'auto' }}>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute bottom-0 left-1/2 h-[80vh] w-[80vw] -translate-x-1/2 translate-y-1/2 rounded-full opacity-30 blur-[60px] md:blur-[150px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
         <div className="absolute inset-0 bg-radial-spotlight opacity-50" />

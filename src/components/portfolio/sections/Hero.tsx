@@ -36,7 +36,8 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden"
+      className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden contain-paint"
+      style={{ contentVisibility: 'auto' }}
       id="home"
     >
       {/* Background layers */}

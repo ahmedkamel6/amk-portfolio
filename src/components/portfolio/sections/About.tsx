@@ -27,7 +27,7 @@ export function About({ about, index = '03' }: { about: AboutContent, index?: st
   const descriptionText = about.description || ''
 
   return (
-    <section id="about" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48" ref={containerRef}>
+    <section id="about" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48 contain-paint" style={{ contentVisibility: 'auto' }} ref={containerRef}>
       <div className="pointer-events-none absolute inset-0">
       </div>
       
@@ -53,6 +53,8 @@ export function About({ about, index = '03' }: { about: AboutContent, index?: st
             <img 
               src={about.imageUrl || '/default-avatar.png'} 
               alt="Ahmed Kamel Profile"
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-50" />
@@ -120,6 +122,8 @@ export function About({ about, index = '03' }: { about: AboutContent, index?: st
                 <img 
                   src="/icon.png" 
                   alt="Video Thumbnail"
+                  loading="lazy"
+                  decoding="async"
                   className="h-32 md:h-48 w-auto object-contain opacity-50 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-70"
                 />
               </div>

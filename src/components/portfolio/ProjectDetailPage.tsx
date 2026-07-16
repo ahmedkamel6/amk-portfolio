@@ -107,7 +107,7 @@ export function ProjectDetailPage({
             />
           ) : posterUrl ? (
             <div className="relative aspect-video overflow-hidden rounded-3xl border border-[var(--border)] bg-black" style={{ height: 'min(80vh, 800px)' }}>
-              <img src={posterUrl} alt={project.title} className="absolute inset-0 h-full w-full object-cover opacity-80" />
+              <img src={posterUrl} alt={project.title} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-80" />
             </div>
           ) : (
             <div className="relative aspect-video overflow-hidden rounded-3xl border border-[var(--border)]" style={{ height: 'min(80vh, 800px)' }}>
@@ -187,7 +187,7 @@ export function ProjectDetailPage({
                   transition={{ duration: 0.6, delay: i * 0.08 }}
                   className="aspect-video overflow-hidden rounded-2xl border border-[var(--border)]"
                 >
-                  <img src={src} alt={`${project.title} ${i + 1}`} className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
+                  <img src={src} alt={`${project.title} ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 hover:scale-105" />
                 </motion.div>
               ))}
             </div>

@@ -12,7 +12,7 @@ const ROTATE = [0, 2, -1, 1, 0]
 
 function FloatingBadge({ skill, index }: { skill: Skill; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, amount: 0.3 })
+  const inView = useInView(ref, { once: true, amount: 0.1, margin: "0px 0px -50px 0px" })
   const isMobile = useIsMobile()
 
   return (
@@ -20,9 +20,10 @@ function FloatingBadge({ skill, index }: { skill: Skill; index: number }) {
       ref={ref}
       initial={{ opacity: 0, scale: 0.5, y: 40 }}
       animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.7, delay: isMobile ? (index % 3) * 0.05 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ scale: 1.08, transition: { duration: 0.3 } }}
       className="group relative"
+      style={{ willChange: "transform, opacity" }}
     >
       <motion.div
         animate={{ y: FLOAT_Y, x: FLOAT_X, rotate: ROTATE }}
@@ -65,7 +66,7 @@ export function Skills({ skills, index = '06' }: { skills: Skill[], index?: stri
   const inView = useInView(containerRef, { once: true, amount: 0.1 })
 
   return (
-    <section id="skills" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48" ref={containerRef}>
+    <section id="skills" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48 contain-paint" style={{ contentVisibility: 'auto' }} ref={containerRef}>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-0 top-1/2 h-[60vh] w-[40vw] -translate-y-1/2 rounded-full opacity-20 blur-[60px] md:blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 30%, transparent), transparent 70%)' }} />
       </div>

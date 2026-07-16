@@ -49,7 +49,8 @@ export function Showreel({ showreel, index = '01' }: { showreel: ShowreelContent
   return (
     <section
       id="showreel"
-      className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48"
+      className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48 contain-paint"
+      style={{ contentVisibility: 'auto' }}
       ref={ref}
     >
       <div className="pointer-events-none absolute inset-0">

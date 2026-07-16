@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
 import type { Project } from '@/lib/portfolio/default-content'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 // Helper to convert Google Drive share links to direct stream/download links
 export function getDirectDriveUrl(url: string | null | undefined): string | null {
@@ -31,9 +32,10 @@ export function getDriveThumbnailUrl(url: string | null | undefined): string | n
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const inView = useInView(ref, { once: true, amount: 0.2 })
+  const inView = useInView(ref, { once: true, amount: 0.2, margin: "0px 0px -50px 0px" })
   const [hovered, setHovered] = useState(false)
   const [videoError, setVideoError] = useState(false)
+  const isMobile = useIsMobile()
 
   // Use the new driveUrl or fallback to old videoUrl
   const p = project as any
@@ -61,10 +63,11 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       ref={ref}
       initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: (index % 5) * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.7, delay: isMobile ? (index % 2) * 0.05 : (index % 5) * 0.1, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="group relative"
+      style={{ willChange: "transform, opacity" }}
     >
       <Link href={`/projects/${p.slug}`} className="block h-full w-full">
         {/* Reels-style vertical aspect ratio 9:16 */}
@@ -73,7 +76,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
           {/* Static Cover/Gradient */}
           <div className={`absolute inset-0 h-full w-full bg-gradient-to-br ${project.gradient}`}>
             {posterUrl && (
-              <img src={posterUrl} alt={project.title} className="absolute inset-0 h-full w-full object-cover opacity-80" />
+              <img src={posterUrl} alt={project.title} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-80" />
             )}
           </div>
 

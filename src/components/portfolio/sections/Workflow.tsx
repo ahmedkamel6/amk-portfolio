@@ -58,7 +58,7 @@ export function Workflow({ workflow, index = '05' }: { workflow: WorkflowStep[],
   const inView = useInView(containerRef, { once: true, amount: 0.1 })
 
   return (
-    <section id="process" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48" ref={containerRef}>
+    <section id="process" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48 contain-paint" style={{ contentVisibility: 'auto' }} ref={containerRef}>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-0 h-[80vh] w-[40vw] -translate-x-1/2 rounded-full opacity-25 blur-[60px] md:blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
       </div>

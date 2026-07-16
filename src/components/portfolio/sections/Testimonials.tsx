@@ -52,7 +52,7 @@ export function Testimonials({ testimonials, index = '08' }: { testimonials: Tes
   const current = testimonials[safeIndex]
 
   return (
-    <section id="testimonials" ref={containerRef} className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+    <section id="testimonials" ref={containerRef} className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48 contain-paint" style={{ contentVisibility: 'auto' }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 h-[60vh] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[60px] md:blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
       </div>
