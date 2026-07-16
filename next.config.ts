@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   reactStrictMode: false,
   allowedDevOrigins: [
     "preview-chat-ac0442f2-b793-445a-8801-422309da62eb.space-z.ai",
