@@ -24,6 +24,7 @@ export interface ShowreelContent {
   software: string
   videoTitle: string
   timecode: string
+  videoUrl?: string | null
 }
 
 export interface Service {
