@@ -1,0 +1,240 @@
+// Prisma schema for AMK Portfolio
+// SQLite for local dev — switch to postgresql in production via DATABASE_URL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Single row (id = "singleton") — Hero section content
+model HeroContent {
+  id             String   @id @default("singleton")
+  name           String
+  nameHighlight  String
+  eyebrow        String
+  badge          String
+  /// comma-separated roles
+  roles          String
+  /// JSON array of { value, label }
+  statsJson      String
+  primaryCtaLabel String
+  primaryCtaHref  String
+  secondaryCtaLabel String
+  secondaryCtaHref  String
+  updatedAt      DateTime @updatedAt
+}
+
+/// Single row — Showreel section content
+model ShowreelContent {
+  id             String   @id @default("singleton")
+  title          String
+  titleHighlight String
+  description    String
+  duration       String
+  year           String
+  software       String
+  videoTitle     String
+  timecode       String
+  videoUrl       String?
+  updatedAt      DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  emoji       String
+  iconName    String
+  title       String
+  description String
+  /// comma-separated features
+  features    String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  title            String
+  category         String
+  shortDescription String
+  fullDescription  String
+  /// tailwind gradient classes for cover
+  gradient         String
+  pattern          String   @default("cinema")
+  /// comma-separated tools/tech
+  toolsUsed        String
+  year             String
+  duration         String?
+  client           String?
+  videoUrl         String?
+  coverImage       String?
+  /// Google Drive direct link or share link
+  driveUrl         String?
+  /// Thumbnail for the Google Drive video
+  thumbnailUrl     String?
+  /// JSON array of image/video URLs
+  galleryJson      String   @default("[]")
+  /// JSON { before, after } image URLs
+  beforeAfterJson  String   @default("{}")
+  featured         Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([slug])
+  @@index([category])
+  @@index([featured])
+}
+
+/// Single row — Before/After section content
+model BeforeAfterContent {
+  id             String   @id @default("singleton")
+  title          String
+  titleHighlight String
+  description    String
+  beforeLabel    String
+  afterLabel     String
+  updatedAt      DateTime @updatedAt
+}
+
+model WorkflowStep {
+  id          String   @id @default(cuid())
+  number      String
+  title       String
+  description String
+  iconName    String
+  duration    String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+  id       String   @id @default(cuid())
+  name     String
+  short    String
+  level    Int      @default(80)
+  color    String
+  category String
+  order    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Single row — About section content
+model AboutContent {
+  id             String   @id @default("singleton")
+  title          String   @default("The Journey")
+  titleHighlight String   @default("So Far")
+  description    String   @default("I am a creative director...")
+  imageUrl       String?
+  videoUrl       String?
+  tools          String   @default("Premiere Pro, After Effects, Photoshop, Blender")
+  updatedAt      DateTime @updatedAt
+}
+
+model Testimonial {
+  id       String   @id @default(cuid())
+  name     String
+  role     String
+  company  String
+  quote    String
+  initials String
+  color    String
+  rating   Int      @default(5)
+  photoUrl String?
+  order    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Single row — Contact section
+model ContactInfo {
+  id             String   @id @default("singleton")
+  title          String
+  titleHighlight String
+  description    String
+  ctaLabel       String
+  ctaHref        String
+  footerName     String
+  footerTagline  String
+  footerCopyright String
+  /// JSON array of { iconName, label, handle, href }
+  channelsJson   String
+  updatedAt      DateTime @updatedAt
+}
+
+/// Single row — Appearance / theme settings
+model AppearanceSettings {
+  id               String   @id @default("singleton")
+  mode             String   @default("dark")
+  accent           String   @default("#00D084")
+  accentSoft       String   @default("#00FF9D")
+  background       String   @default("#0B0B0B")
+  particleCount    Int      @default(600)
+  gridOpacity      Float    @default(0.15)
+  glowIntensity    Float    @default(1)
+  
+  // Section Visibility
+  showShowreel     Boolean  @default(true)
+  showServices     Boolean  @default(true)
+  showProjects     Boolean  @default(true)
+  showBeforeAfter  Boolean  @default(true)
+  showWorkflow     Boolean  @default(true)
+  showSkills       Boolean  @default(true)
+  showAbout        Boolean  @default(true)
+  showTestimonials Boolean  @default(true)
+  showContact      Boolean  @default(true)
+
+  // Navbar Ordering
+  orderProjects    Int      @default(1)
+  orderSkills      Int      @default(2)
+  orderAbout       Int      @default(3)
+  orderContact     Int      @default(4)
+
+  customLogoUrl    String?
+
+  updatedAt        DateTime @updatedAt
+}
+
+/// Admin user for authentication
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  /// hashed password (bcrypt)
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// Session for admin auth
+model AdminSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  userAgent String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+}
+
+/// Password reset tokens
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  userId     String
+  expiresAt  DateTime
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([tokenHash])
+  @@index([userId])
+}
