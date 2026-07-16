@@ -4,13 +4,16 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { SectionHeading } from '../SectionHeading'
 import type { Skill } from '@/lib/portfolio/default-content'
+import { useIsMobile } from '@/hooks/use-mobile'
+
+const FLOAT_Y = [0, -12, 0, 8, 0]
+const FLOAT_X = [0, 6, -4, 2, 0]
+const ROTATE = [0, 2, -1, 1, 0]
 
 function FloatingBadge({ skill, index }: { skill: Skill; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.3 })
-  const floatY = [0, -12, 0, 8, 0]
-  const floatX = [0, 6, -4, 2, 0]
-  const rotate = [0, 2, -1, 1, 0]
+  const isMobile = useIsMobile()
 
   return (
     <motion.div
@@ -22,12 +25,12 @@ function FloatingBadge({ skill, index }: { skill: Skill; index: number }) {
       className="group relative"
     >
       <motion.div
-        animate={{ y: floatY, x: floatX, rotate }}
-        transition={{ duration: 6 + (index % 4), repeat: Infinity, ease: 'easeInOut', delay: index * 0.4 }}
+        animate={{ y: FLOAT_Y, x: FLOAT_X, rotate: ROTATE }}
+        transition={{ duration: (isMobile ? 18 : 6) + (index % 4), repeat: Infinity, ease: 'easeInOut', delay: index * 0.4 }}
         className="relative"
       >
-        <div className="absolute -inset-2 rounded-3xl opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-60" style={{ background: `radial-gradient(circle, ${skill.color}40, transparent 70%)` }} />
-        <div className="relative flex flex-col items-center gap-3 rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] px-5 py-6 backdrop-blur-xl transition-all duration-500 group-hover:border-emerald-glow/30 group-hover:bg-emerald-glow/[0.03]">
+        <div className="absolute -inset-2 rounded-3xl opacity-0 blur-md md:blur-xl transition-opacity duration-500 group-hover:opacity-60" style={{ background: `radial-gradient(circle, ${skill.color}40, transparent 70%)` }} />
+        <div className="relative flex flex-col items-center gap-3 rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] px-5 py-6 backdrop-blur-md md:backdrop-blur-xl transition-all duration-500 group-hover:border-emerald-glow/30 group-hover:bg-emerald-glow/[0.03]">
           <div
             className="flex h-14 w-14 items-center justify-center rounded-2xl font-display text-lg font-bold transition-transform duration-500 group-hover:scale-110"
             style={{
@@ -64,7 +67,7 @@ export function Skills({ skills, index = '06' }: { skills: Skill[], index?: stri
   return (
     <section id="skills" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48" ref={containerRef}>
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 top-1/2 h-[60vh] w-[40vw] -translate-y-1/2 rounded-full opacity-20 blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 30%, transparent), transparent 70%)' }} />
+        <div className="absolute right-0 top-1/2 h-[60vh] w-[40vw] -translate-y-1/2 rounded-full opacity-20 blur-[60px] md:blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 30%, transparent), transparent 70%)' }} />
       </div>
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <SectionHeading index={index} eyebrow="Toolkit" title={<>Tools of the <span className="text-gradient-emerald">Trade</span></>} description="A floating constellation of the software and disciplines I reach for daily — each one pushed past its defaults." />

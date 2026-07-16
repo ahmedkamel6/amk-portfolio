@@ -13,6 +13,11 @@ const ParticleBackground = lazy(() =>
   import('../three/ParticleBackground').then((m) => ({ default: m.ParticleBackground }))
 )
 
+const ORB_1_ANIM = { y: [0, -30, 0], x: [0, 20, 0] }
+const ORB_2_ANIM = { y: [0, 40, 0], x: [0, -25, 0] }
+const SHIMMER_ANIM = { backgroundPosition: ['-200% 0', '200% 0'] }
+const SCROLL_CUE_ANIM = { y: ['-50%', '150%'] }
+
 export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSettings, 'background' | 'accent' | 'accentSoft' | 'particleCount' | 'mode'> }) {
   const ref = useRef<HTMLElement>(null)
   const isMobile = useIsMobile()
@@ -59,15 +64,15 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
 
       {/* Floating ambient orbs */}
       <motion.div
-        className={`pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full ${isMobile ? 'opacity-15 blur-2xl' : 'opacity-30 blur-3xl'}`}
+        className={`pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full ${isMobile ? 'opacity-15 blur-lg' : 'opacity-30 blur-3xl'}`}
         style={{ background: 'radial-gradient(circle, var(--emerald-glow), transparent 70%)', willChange: 'transform' }}
-        animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
-        transition={{ duration: isMobile ? 24 : 12, repeat: Infinity, ease: 'easeInOut' }}
+        animate={ORB_1_ANIM}
+        transition={{ duration: isMobile ? 36 : 12, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className={`pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full hidden md:block opacity-20 blur-3xl`}
         style={{ background: 'radial-gradient(circle, var(--accent-soft), transparent 70%)', willChange: 'transform' }}
-        animate={{ y: [0, 40, 0], x: [0, -25, 0] }}
+        animate={ORB_2_ANIM}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
 
@@ -116,7 +121,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
       >
         {/* Available badge */}
         <motion.div
-          className="mb-10 inline-flex items-center gap-2.5 rounded-full border border-emerald-glow/20 bg-emerald-glow/5 px-4 py-1.5 backdrop-blur-xl"
+          className="mb-10 inline-flex items-center gap-2.5 rounded-full border border-emerald-glow/20 bg-emerald-glow/5 px-4 py-1.5 backdrop-blur-md md:backdrop-blur-xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -154,9 +159,9 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
             <motion.span
               className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%]"
               initial={{ backgroundPosition: '200% 0' }}
-              animate={{ backgroundPosition: ['-200% 0', '200% 0'] }}
+              animate={SHIMMER_ANIM}
               transition={{
-                duration: isMobile ? 12 : 4,
+                duration: isMobile ? 16 : 4,
                 repeat: Infinity,
                 ease: 'linear',
                 delay: 2,
@@ -265,8 +270,8 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
           <div className="relative h-10 w-px overflow-hidden bg-[var(--border)]">
             <motion.div
               className="absolute inset-x-0 top-0 h-1/2 bg-emerald-glow"
-              animate={{ y: ['-50%', '150%'] }}
-              transition={{ duration: isMobile ? 4.8 : 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              animate={SCROLL_CUE_ANIM}
+              transition={{ duration: isMobile ? 6 : 1.6, repeat: Infinity, ease: 'easeInOut' }}
               style={{ willChange: 'transform' }}
             />
           </div>

@@ -13,6 +13,7 @@ import Lenis from 'lenis'
 export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
+    if (window.innerWidth < 768) return // Disable Lenis completely on mobile
     const prefersReduced = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches

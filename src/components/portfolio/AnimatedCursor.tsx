@@ -45,7 +45,8 @@ export function AnimatedCursor() {
   const dotX = useSpring(mouseX, { stiffness: 1200, damping: 50 })
   const dotY = useSpring(mouseY, { stiffness: 1200, damping: 50 })
 
-  const enabled = mounted && hasFinePointer && !touchDetected
+  const isMobileSize = typeof window !== 'undefined' && window.innerWidth < 768
+  const enabled = mounted && hasFinePointer && !touchDetected && !isMobileSize
 
   useEffect(() => {
     if (!enabled) return

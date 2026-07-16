@@ -15,7 +15,7 @@ export function Contact({ contact, index = '09' }: { contact: ContactContent, in
   return (
     <section id="contact" ref={ref} className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute bottom-0 left-1/2 h-[80vh] w-[80vw] -translate-x-1/2 translate-y-1/2 rounded-full opacity-30 blur-[150px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
+        <div className="absolute bottom-0 left-1/2 h-[80vh] w-[80vw] -translate-x-1/2 translate-y-1/2 rounded-full opacity-30 blur-[60px] md:blur-[150px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
         <div className="absolute inset-0 bg-radial-spotlight opacity-50" />
       </div>
       <div className="relative z-10 mx-auto max-w-6xl px-6">
@@ -36,7 +36,7 @@ export function Contact({ contact, index = '09' }: { contact: ContactContent, in
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.6 + i * 0.1 }}
-              className="group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] p-6 backdrop-blur-xl transition-all duration-500 hover:border-emerald-glow/30 hover:bg-emerald-glow/[0.03]"
+              className="group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] p-6 backdrop-blur-md md:backdrop-blur-xl transition-all duration-500 hover:border-emerald-glow/30 hover:bg-emerald-glow/[0.03]"
             >
               <div className="flex items-center justify-between">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-transparent text-emerald-glow transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">

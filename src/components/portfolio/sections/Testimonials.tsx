@@ -8,7 +8,7 @@ import type { Testimonial } from '@/lib/portfolio/default-content'
 
 function TestimonialCard({ t }: { t: Testimonial }) {
   return (
-    <div className="relative h-full overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] p-8 backdrop-blur-xl md:p-10">
+    <div className="relative h-full overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] p-8 backdrop-blur-md md:backdrop-blur-xl md:p-10">
       <div className="pointer-events-none absolute right-6 top-6 opacity-[0.06]">
         <Quote className="h-32 w-32 text-emerald-glow" />
       </div>
@@ -54,7 +54,7 @@ export function Testimonials({ testimonials, index = '08' }: { testimonials: Tes
   return (
     <section id="testimonials" ref={containerRef} className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/2 h-[60vh] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
+        <div className="absolute left-1/2 top-1/2 h-[60vh] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[60px] md:blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
       </div>
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading index={index} eyebrow="Testimonials" title={<>Kind Words from <span className="text-gradient-emerald">Collaborators</span></>} description="The work speaks for itself — but sometimes it helps to hear it from the people who commissioned it." />
