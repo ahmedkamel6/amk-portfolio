@@ -3,6 +3,12 @@ import { db } from '@/lib/db'
 import { requireAuthOr401, revalidateSite } from '@/lib/portfolio/api-helpers'
 import bcrypt from 'bcryptjs'
 
+export const dynamic = 'force-static';
+
+export async function GET() {
+  return Response.json({ message: "Static API migration route" });
+}
+
 function slugify(s: string): string {
   return s.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '')
 }
