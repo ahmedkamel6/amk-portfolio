@@ -198,16 +198,18 @@ export async function POST(req: NextRequest) {
 
   // About
   if (Array.isArray(body.about)) {
-    await db.aboutTimelineItem.deleteMany({})
-    for (let i = 0; i < body.about.length; i++) {
-      const a = body.about[i]
-      await db.aboutTimelineItem.create({
-        data: {
-          year: a.year ?? '2026', title: a.title ?? '', description: a.description ?? '',
-          iconName: a.iconName ?? 'Sparkles', highlight: a.highlight ?? false,
-          order: i,
-        },
-      })
+    if ('aboutTimelineItem' in db) {
+      await (db as any).aboutTimelineItem.deleteMany({})
+      for (let i = 0; i < body.about.length; i++) {
+        const a = body.about[i]
+        await (db as any).aboutTimelineItem.create({
+          data: {
+            year: a.year ?? '2026', title: a.title ?? '', description: a.description ?? '',
+            iconName: a.iconName ?? 'Sparkles', highlight: a.highlight ?? false,
+            order: i,
+          },
+        })
+      }
     }
     results.about = body.about.length
   }
