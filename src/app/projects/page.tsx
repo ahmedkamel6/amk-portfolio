@@ -2,6 +2,8 @@ import { getProjects, getSiteContent } from '@/lib/portfolio/db'
 import { ProjectCard } from '@/components/portfolio/ProjectCard'
 import { SectionHeading } from '@/components/portfolio/SectionHeading'
 import { Navigation } from '@/components/portfolio/sections/Navigation'
+import { SmoothScroll } from '@/components/portfolio/SmoothScroll'
+import { AmbientBackground } from '@/components/portfolio/AmbientBackground'
 
 export const metadata = {
   title: 'All Projects | AMK Portfolio',
@@ -15,14 +17,10 @@ export default async function ProjectsPage() {
   const archive = projects.slice(0, 100)
   
   return (
-    <>
+    <SmoothScroll>
+      <AmbientBackground theme={content.theme} />
       <Navigation theme={content.theme} />
-      <main className="min-h-screen bg-[var(--background)] pt-32 pb-24">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-1/4 top-0 h-[60vh] w-[40vw] rounded-full opacity-10 blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
-          <div className="absolute inset-0 bg-grid opacity-10" />
-        </div>
-        
+      <main className="min-h-screen pt-32 pb-24 relative">
         <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6">
           <SectionHeading 
             index="ARCHIVE" 
@@ -38,6 +36,6 @@ export default async function ProjectsPage() {
           </div>
         </div>
       </main>
-    </>
+    </SmoothScroll>
   )
 }

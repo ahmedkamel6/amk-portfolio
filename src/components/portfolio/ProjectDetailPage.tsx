@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, User, Wrench, Play, Mail } from 'lucide-react'
 import type { ProjectDetail } from '@/lib/portfolio/db'
@@ -14,6 +15,17 @@ export function ProjectDetailPage({
   project: ProjectDetail
   related: ProjectDetail[]
 }) {
+  const router = useRouter()
+
+  const handleBack = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (window.history.length > 2) {
+      router.back()
+    } else {
+      router.push('/projects')
+    }
+  }
+
   const details = [
     { icon: Calendar, label: 'Year', value: project.year },
     { icon: Clock, label: 'Duration', value: project.duration || '—' },
@@ -49,13 +61,13 @@ export function ProjectDetailPage({
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Link
-            href="/#projects"
-            className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors hover:text-emerald-glow"
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors hover:text-emerald-glow focus:outline-none"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to all projects
-          </Link>
+          </button>
         </motion.div>
 
         {/* Hero */}

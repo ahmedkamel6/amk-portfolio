@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import type { ThemeSettings } from '@/lib/portfolio/default-content'
 
@@ -18,6 +20,7 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const { scrollY } = useScroll()
+  const pathname = usePathname()
 
   useMotionValueEvent(scrollY, 'change', (v) => {
     setScrolled(v > 40)
@@ -35,16 +38,21 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
     }
   }, [open])
 
+  // Close menu on route change to clear scroll locks
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
+
   return (
     <>
       <motion.header
-        className="fixed inset-x-0 top-0 z-[9990] flex justify-center px-4 pt-4"
+        className="fixed inset-x-0 top-0 z-[9990] flex justify-center px-4 pt-4 pointer-events-none"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, delay: 2.6 }}
       >
         <motion.nav
-          className="flex items-center justify-between gap-6 rounded-full px-6 py-3 transition-all duration-500"
+          className="flex items-center justify-between gap-6 rounded-full px-6 py-3 transition-all duration-500 pointer-events-auto"
           style={{
             background: scrolled
               ? 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))'
@@ -55,8 +63,8 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
           }}
         >
           {/* Logo */}
-          <a
-            href="#home"
+          <Link
+            href={pathname === '/' ? '#home' : '/'}
             data-cursor="hover"
             className="flex items-center justify-center gap-2"
             aria-label="Home"
@@ -78,31 +86,31 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
               style={{ filter: 'url(#iceBlueColorize)' }}
               className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 hover:scale-105"
             />
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <div className="hidden items-center gap-1 md:flex">
             {links.map((link) => (
-              <a
+              <Link
                 key={link.href}
-                href={link.href}
+                href={pathname === '/' ? link.href : '/' + link.href}
                 data-cursor="hover"
                 className="rounded-full px-4 py-2 text-xs font-medium text-white/60 transition-colors hover:text-emerald-glow"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
-            <a
-              href="#contact"
+            <Link
+              href={pathname === '/' ? '#contact' : '/#contact'}
               data-cursor="hover"
               className="hidden rounded-full glass-emerald px-5 py-2 text-xs font-medium text-emerald-glow transition-colors hover:text-[var(--text-primary)] md:block"
             >
               Let&apos;s Talk
-            </a>
+            </Link>
             <button
               onClick={() => setOpen((o) => !o)}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-primary)] md:hidden"
@@ -114,11 +122,10 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
         </motion.nav>
       </motion.header>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-[9989] flex flex-col items-center justify-center gap-6 bg-[var(--background)]/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-[9989] flex flex-col items-center justify-center gap-6 bg-[var(--background)]/95 backdrop-blur-xl md:hidden pointer-events-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -126,28 +133,34 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
           >
             <div className="pointer-events-none absolute inset-0 bg-radial-spotlight opacity-50" />
             {links.map((link, i) => (
-              <motion.a
+              <motion.div
                 key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.05 }}
-                className="font-display text-3xl font-bold text-[var(--text-primary)]"
               >
-                {link.label}
-              </motion.a>
+                <Link
+                  href={pathname === '/' ? link.href : '/' + link.href}
+                  onClick={() => setOpen(false)}
+                  className="font-display text-3xl font-bold text-[var(--text-primary)]"
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
-            <motion.a
-              href="#contact"
-              onClick={() => setOpen(false)}
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mt-6 rounded-full glass-emerald px-8 py-3 text-sm font-medium text-emerald-glow"
             >
-              Let&apos;s Talk
-            </motion.a>
+              <Link
+                href={pathname === '/' ? '#contact' : '/#contact'}
+                onClick={() => setOpen(false)}
+                className="mt-6 inline-block rounded-full glass-emerald px-8 py-3 text-sm font-medium text-emerald-glow"
+              >
+                Let&apos;s Talk
+              </Link>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
