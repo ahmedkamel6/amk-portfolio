@@ -35,7 +35,19 @@ export async function getHero(): Promise<HeroContent> {
 
 export async function getShowreel(): Promise<ShowreelContent> {
   const row = await db.showreelContent.findUnique({ where: { id: 'singleton' } })
-  if (!row) throw new Error('Showreel content not seeded')
+  if (!row) {
+    return {
+      title: "",
+      titleHighlight: "",
+      description: "",
+      duration: "",
+      year: "",
+      software: "",
+      videoTitle: "",
+      timecode: "",
+      videoUrl: null
+    }
+  }
   return {
     title: row.title,
     titleHighlight: row.titleHighlight,
