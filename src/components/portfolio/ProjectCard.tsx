@@ -134,11 +134,11 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
               transition={{ duration: 0.3 }}
             >
               <p className="text-xs text-white/70 line-clamp-2 mb-3">
-                {p.shortDescription || project.description}
+                {project.shortDescription}
               </p>
               
               <div className="flex flex-wrap gap-1.5 mb-2">
-                {project.tech.slice(0, 3).map((t) => (
+                {project.toolsUsed.slice(0, 3).map((t) => (
                   <span key={t} className="rounded-sm bg-white/10 px-1.5 py-0.5 text-[9px] text-white/90">
                     {t}
                   </span>

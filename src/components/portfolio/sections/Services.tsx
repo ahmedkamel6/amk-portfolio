@@ -49,7 +49,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
   )
 }
 
-export function Services({ services }: { services: Service[] }) {
+export function Services({ services, index }: { services: Service[], index?: string }) {
   if (!services || services.length === 0) return null;
 
   return (

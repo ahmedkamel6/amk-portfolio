@@ -12,7 +12,7 @@ import {
   type BeforeAfterContent,
   type WorkflowStep,
   type Skill,
-  type Milestone,
+  type AboutContent,
   type Testimonial,
   type ContactContent,
   type ThemeSettings,
@@ -39,8 +39,7 @@ interface ContentStore extends SiteContent {
   upsertSkill: (item: Skill) => void
   removeSkill: (id: string) => void
 
-  upsertMilestone: (item: Milestone) => void
-  removeMilestone: (id: string) => void
+  setAbout: (patch: Partial<AboutContent>) => void
 
   upsertTestimonial: (item: Testimonial) => void
   removeTestimonial: (id: string) => void
@@ -95,8 +94,7 @@ export const useContentStore = create<ContentStore>()(
       upsertSkill: (item) => set((s) => ({ skills: upsert(s.skills, item) })),
       removeSkill: (id) => set((s) => ({ skills: remove(s.skills, id) })),
 
-      upsertMilestone: (item) => set((s) => ({ about: upsert(s.about, item) })),
-      removeMilestone: (id) => set((s) => ({ about: remove(s.about, id) })),
+      setAbout: (patch) => set((s) => ({ about: { ...s.about, ...patch } })),
 
       upsertTestimonial: (item) => set((s) => ({ testimonials: upsert(s.testimonials, item) })),
       removeTestimonial: (id) => set((s) => ({ testimonials: remove(s.testimonials, id) })),
@@ -134,7 +132,7 @@ export const useContentStore = create<ContentStore>()(
         const { setHero, setShowreel, setBeforeAfter, setContact, setTheme, toggleTheme,
           upsertService, removeService, reorderServices, upsertProject, removeProject,
           upsertWorkflowStep, removeWorkflowStep, upsertSkill, removeSkill,
-          upsertMilestone, removeMilestone, upsertTestimonial, removeTestimonial,
+          setAbout, upsertTestimonial, removeTestimonial,
           importContent, exportContent, resetAll, ...data } = s
         return data as SiteContent
       },

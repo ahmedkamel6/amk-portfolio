@@ -38,15 +38,18 @@ export interface Service {
 
 export interface Project {
   id: string
+  slug?: string
   title: string
   category: string
-  description: string
-  tech: string[]
+  shortDescription: string
+  fullDescription?: string
+  toolsUsed: string[]
   year: string
   gradient: string
   pattern: 'cinema' | 'product' | 'brand' | 'motion'
   driveUrl?: string | null
   thumbnailUrl?: string | null
+  featured?: boolean
 }
 
 export interface BeforeAfterContent {
@@ -213,9 +216,9 @@ export const defaultContent: SiteContent = {
       id: 'p1',
       title: 'Echoes of Cairo',
       category: 'Cinematic Short Film',
-      description:
+      shortDescription:
         'A 4-minute cinematic short blending live footage with 3D environments. Color-graded in DaVinci, sound designed in Pro Tools.',
-      tech: ['Premiere Pro', 'DaVinci Resolve', 'After Effects'],
+      toolsUsed: ['Premiere Pro', 'DaVinci Resolve', 'After Effects'],
       year: '2026',
       gradient: 'from-[#003B2A] via-[#00D084]/40 to-[#0B0B0B]',
       pattern: 'cinema',
@@ -224,9 +227,9 @@ export const defaultContent: SiteContent = {
       id: 'p2',
       title: 'Aurora Product Launch',
       category: '3D Product Film',
-      description:
+      shortDescription:
         'A 60-second hero film for a luxury skincare brand — fully CGI, photoreal materials, simulated liquid dynamics.',
-      tech: ['Blender', 'Octane', 'After Effects'],
+      toolsUsed: ['Blender', 'Octane', 'After Effects'],
       year: '2025',
       gradient: 'from-[#001F3F] via-[#00D084]/30 to-[#0B0B0B]',
       pattern: 'product',
@@ -235,9 +238,9 @@ export const defaultContent: SiteContent = {
       id: 'p3',
       title: 'Lumen Brand System',
       category: 'Brand Identity',
-      description:
+      shortDescription:
         'A complete identity system — logo, typography, color, motion guidelines — for an emerging tech studio in Dubai.',
-      tech: ['Illustrator', 'Photoshop', 'After Effects'],
+      toolsUsed: ['Illustrator', 'Photoshop', 'After Effects'],
       year: '2025',
       gradient: 'from-[#2A0A3F] via-[#00FF9D]/25 to-[#0B0B0B]',
       pattern: 'brand',
@@ -246,9 +249,9 @@ export const defaultContent: SiteContent = {
       id: 'p4',
       title: 'Pulse — Title Sequence',
       category: 'Motion Graphics',
-      description:
+      shortDescription:
         'Opening title sequence for a documentary series. Typographic choreography synced to a custom-composed score.',
-      tech: ['After Effects', 'Cinema 4D', 'Premiere Pro'],
+      toolsUsed: ['After Effects', 'Cinema 4D', 'Premiere Pro'],
       year: '2024',
       gradient: 'from-[#3F0A0A] via-[#FF6B6B]/30 to-[#0B0B0B]',
       pattern: 'motion',
