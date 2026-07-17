@@ -83,7 +83,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
 
     // Attach to the entire container rather than just the embla root node
     // to ensure the user doesn't accidentally scroll the page when their mouse is in the padding area
-    const node = emblaRef.current?.parentElement
+    const node = emblaApi?.rootNode()?.parentElement
     if (node) {
       node.addEventListener('wheel', handleWheel, { passive: false })
     }
