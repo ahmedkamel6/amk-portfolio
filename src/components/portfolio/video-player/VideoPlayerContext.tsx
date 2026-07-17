@@ -1,6 +1,5 @@
 "use client"
-import React, { createContext, useContext, useRef, useState, useEffect } from 'react'
-import Hls from 'hls.js'
+import React, { createContext, useContext, useRef, useState, useEffect, useCallback } from 'react'
 
 export type VideoQuality = 'auto' | '1080p' | '720p' | '480p' | '360p'
 
@@ -57,10 +56,25 @@ export const useVideoPlayer = () => {
   return context
 }
 
+/**
+ * Helper: Convert a Google Drive share URL to a proxy-redirect URL.
+ * The proxy resolves the real download link and 302-redirects the browser to it,
+ * avoiding the 100MB virus scan HTML warning which causes NotSupportedError.
+ */
+function resolveDriveUrl(src: string): string {
+  if (!src || !src.includes('drive.google.com')) return src;
+  const match = src.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
+    return `/api/stream?url=${encodeURIComponent(directUrl)}`;
+  }
+  return src;
+}
+
 export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNode, src: string }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const hlsRef = useRef<Hls | null>(null)
+  const hlsRef = useRef<any>(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
@@ -81,32 +95,31 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
   const [isBuffering, setIsBuffering] = useState(false)
   const [finalSrc, setFinalSrc] = useState<string | null>(null)
 
-  // Initialize HLS or Native
+  // Initialize video source — lazy-load HLS only if .m3u8 is detected
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
-    const initHls = () => {
-      let finalSrc = src;
-      if (src && src.includes('drive.google.com')) {
-        const match = src.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
-        if (match && match[1]) {
-          // Pipe through proxy to bypass Drive virus warnings and CORS, returning direct MP4
-          const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
-          finalSrc = `/api/proxy-video?url=${encodeURIComponent(directUrl)}`;
-        }
-      }
+    const resolvedSrc = resolveDriveUrl(src);
 
-      if (Hls.isSupported() && finalSrc.includes('.m3u8')) {
+    if (resolvedSrc.includes('.m3u8')) {
+      // Lazy-load hls.js only when actually needed (saves ~250KB from default bundle)
+      import('hls.js').then(({ default: Hls }) => {
+        if (!Hls.isSupported()) {
+          // Safari has native HLS support
+          setIsHls(false)
+          setFinalSrc(resolvedSrc)
+          return
+        }
         setIsHls(true)
         const hls = new Hls({ enableWorker: true, lowLatencyMode: true })
         hlsRef.current = hls
-        hls.loadSource(finalSrc)
+        hls.loadSource(resolvedSrc)
         hls.attachMedia(video)
-        
-        hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+
+        hls.on(Hls.Events.MANIFEST_PARSED, (_event: any, data: any) => {
           const levels: VideoQuality[] = ['auto']
-          data.levels.forEach((l) => {
+          data.levels.forEach((l: any) => {
             if (l.height >= 1080) levels.push('1080p')
             else if (l.height >= 720) levels.push('720p')
             else if (l.height >= 480) levels.push('480p')
@@ -114,13 +127,15 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
           })
           setAvailableQualities(Array.from(new Set(levels)))
         })
-      } else {
+      }).catch(() => {
+        // If dynamic import fails, fall back to native playback
         setIsHls(false)
-        setFinalSrc(finalSrc)
-      }
+        setFinalSrc(resolvedSrc)
+      })
+    } else {
+      setIsHls(false)
+      setFinalSrc(resolvedSrc)
     }
-
-    initHls()
 
     return () => {
       if (hlsRef.current) hlsRef.current.destroy()
@@ -135,7 +150,7 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
       hls.currentLevel = -1
     } else {
       const height = parseInt(quality.replace('p', ''))
-      const levelIndex = hls.levels.findIndex(l => l.height === height)
+      const levelIndex = hls.levels.findIndex((l: any) => l.height === height)
       if (levelIndex !== -1) {
         hls.currentLevel = levelIndex
       }
@@ -164,17 +179,17 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
     }
   }, [isLoop])
 
-  // Actions
-  const togglePlay = () => {
+  // Actions — wrapped in useCallback to prevent child re-renders
+  const togglePlay = useCallback(() => {
     if (videoRef.current) {
-      if (isPlaying) videoRef.current.pause()
-      else videoRef.current.play()
+      if (videoRef.current.paused) videoRef.current.play()
+      else videoRef.current.pause()
     }
-  }
+  }, [])
 
-  const toggleMute = () => setIsMuted(!isMuted)
+  const toggleMute = useCallback(() => setIsMuted(prev => !prev), [])
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (!containerRef.current || !videoRef.current) return
 
     if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
@@ -183,7 +198,6 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
       } else if ((containerRef.current as any).webkitRequestFullscreen) {
         (containerRef.current as any).webkitRequestFullscreen()
       } else if ((videoRef.current as any).webkitEnterFullscreen) {
-        // iOS Safari only allows fullscreen on the video element itself
         (videoRef.current as any).webkitEnterFullscreen()
       }
     } else {
@@ -193,30 +207,32 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
         (document as any).webkitExitFullscreen()
       }
     }
-  }
+  }, [])
 
-  const togglePiP = async () => {
+  const togglePiP = useCallback(async () => {
     if (!videoRef.current) return
     if (document.pictureInPictureElement) {
       await document.exitPictureInPicture()
     } else if (document.pictureInPictureEnabled) {
       await videoRef.current.requestPictureInPicture()
     }
-  }
+  }, [])
 
-  const seek = (time: number) => {
+  const seek = useCallback((time: number) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time
       setCurrentTime(time)
     }
-  }
+  }, [])
 
-  const seekRelative = (delta: number) => {
+  const seekRelative = useCallback((delta: number) => {
     if (videoRef.current) {
-      const newTime = Math.max(0, Math.min(videoRef.current.currentTime + delta, duration))
-      seek(newTime)
+      const d = videoRef.current.duration || 0
+      const newTime = Math.max(0, Math.min(videoRef.current.currentTime + delta, d))
+      videoRef.current.currentTime = newTime
+      setCurrentTime(newTime)
     }
-  }
+  }, [])
 
   return (
     <VideoPlayerContext.Provider

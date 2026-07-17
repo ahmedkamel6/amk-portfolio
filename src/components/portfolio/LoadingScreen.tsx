@@ -32,19 +32,8 @@ export function LoadingScreen() {
     }
     raf = requestAnimationFrame(tick)
 
-    // Safety: also exit when window loads
-    const onLoad = () => {
-      setTimeout(() => setDone(true), 1200)
-    }
-    if (document.readyState === 'complete') {
-      onLoad()
-    } else {
-      window.addEventListener('load', onLoad)
-    }
-
     return () => {
       cancelAnimationFrame(raf)
-      window.removeEventListener('load', onLoad)
     }
   }, [])
 

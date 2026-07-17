@@ -98,26 +98,21 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
   }, [emblaApi, onScroll])
 
   return (
-    <div className="relative w-full overflow-hidden py-10" style={{ perspective: '1200px' }}>
+    <div className="relative w-full overflow-hidden py-10" style={{ perspective: '1200px' }} data-lenis-prevent>
       {/* Edge Fading Shadows for Cinematic Effect */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-32 md:w-64 bg-gradient-to-r from-[#0B0B0B] via-[#0B0B0B]/80 to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 md:w-64 bg-gradient-to-l from-[#0B0B0B] via-[#0B0B0B]/80 to-transparent" />
 
       {/* Embla Carousel Viewport */}
-      <div className="overflow-hidden" ref={emblaRef}>
+      {/* Added py-8 and -my-8 to give the viewport vertical breathing room so the center glow shadow is not clipped by overflow-hidden */}
+      <div className="overflow-hidden py-8 -my-8" ref={emblaRef}>
         <div className="flex touch-pan-y" style={{ backfaceVisibility: 'hidden' }}>
           {multipliedProjects.map((p, index) => {
             return (
               <div
                 key={`${p.id}-${index}`}
                 className="w-[200px] sm:w-[240px] md:w-[280px] flex-shrink-0 flex-grow-0 min-w-0 transition-none"
-                onClickCapture={(e) => {
-                  // Prevent click if the user was dragging the carousel
-                  if (emblaApi && !(emblaApi as any).clickAllowed()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }
-                }}
+
                 style={{
                   // The initial styles will be overwritten instantly by onScroll on mount
                   transform: `scale(0.55)`,

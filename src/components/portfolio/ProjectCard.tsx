@@ -50,10 +50,6 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
 
   const handleMouseLeave = () => {
     setHovered(false)
-    if (videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-    }
   }
 
 
@@ -83,13 +79,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
           {hovered && !isMobile && directVideoUrl && (
             <div className="absolute inset-0 h-full w-full overflow-hidden z-0 pointer-events-none bg-black/20">
               <video
-                ref={(el) => {
-                  if (el) {
-                    // @ts-ignore
-                    videoRef.current = el;
-                    el.play().catch(() => {});
-                  }
-                }}
+                ref={videoRef}
                 src={directVideoUrl}
                 autoPlay
                 loop

@@ -1,9 +1,10 @@
 "use client"
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useCallback } from 'react'
 import { VideoPlayerProvider, useVideoPlayer } from './VideoPlayerContext'
 import Controls from './Controls'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface VideoPlayerProps {
   src: string
@@ -68,8 +69,8 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [togglePlay, seekRelative])
 
-  // Mouse inactivity hide
-  const handleMouseMove = () => {
+  // Mouse inactivity hide — wrapped in useCallback to avoid re-renders
+  const handleMouseMove = useCallback(() => {
     setControlsVisible(true)
     if (idleTimeout.current) clearTimeout(idleTimeout.current)
     if (!isSettingsOpen) {
@@ -77,11 +78,13 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         setControlsVisible(false)
       }, 2500)
     }
-  }
+  }, [isSettingsOpen, setControlsVisible])
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (!isSettingsOpen) setControlsVisible(false)
-  }
+  }, [isSettingsOpen, setControlsVisible])
+
+  const isMobile = useIsMobile()
 
   // Intersection Observer for auto-pause when out of view
   useEffect(() => {
@@ -105,6 +108,19 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
     }
   }, [])
 
+  // Check if it's a Google Drive link to use the iframe fallback for Desktop
+  let driveId = null;
+  if (originalSrc && (originalSrc.includes('drive.google.com') || originalSrc.includes('drive.usercontent.google.com'))) {
+    const match = originalSrc.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || originalSrc.match(/id=([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+      driveId = match[1];
+    }
+  }
+
+  // Use Google Drive iframe strictly on Desktop to avoid buffering. 
+  // Keep custom player on Mobile where it works well.
+  const useIframeFallback = driveId && !isMobile;
+
   return (
     <div 
       ref={containerRef}
@@ -113,13 +129,26 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
       onMouseLeave={handleMouseLeave}
       onClick={() => setControlsVisible(true)}
     >
-      <video
+      {useIframeFallback ? (
+        <iframe
+          src={`https://drive.google.com/file/d/${driveId}/preview?autoplay=${autoPlay ? 1 : 0}`}
+          className="w-full h-full border-0 absolute inset-0 z-10"
+          allow="autoplay; fullscreen"
+          onLoad={() => {
+            setIsLoading(false);
+            setIsBuffering(false);
+          }}
+        />
+      ) : (
+        <video
         ref={videoRef}
         className="w-full h-full object-cover"
         poster={poster}
-        preload="metadata"
+        preload="auto"
         playsInline
         loop={isLoop}
+        // fetchPriority tells the browser this is the most important resource
+        fetchPriority="high"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={() => {
@@ -142,28 +171,30 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
           setIsBuffering(false)
           setIsLoading(false)
         }}
-        onCanPlay={() => {
+        onCanPlay={(e) => {
           setIsLoading(false)
           if (autoPlay && !hasAutoPlayed.current && videoRef.current) {
             hasAutoPlayed.current = true
             videoRef.current.muted = true
             setIsMuted(true)
-            videoRef.current.play().catch(console.error)
+            videoRef.current.play().catch((e) => {
+              if (e.name !== 'AbortError') console.error(e)
+            })
           }
         }}
-      >
-        {finalSrc && <source src={finalSrc} type="video/mp4" />}
-      </video>
+        src={finalSrc || undefined}
+      />
+      )}
 
       {/* Loading Skeleton / Shimmer */}
       <AnimatePresence>
         {/* Loading Spinner for Buffering */}
-        {isBuffering && !isLoading && (
+        {isBuffering && !isLoading && !useIframeFallback && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none"
+            className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none z-20"
           >
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-10 h-10 text-emerald-400 animate-spin" />
@@ -173,7 +204,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         )}
       </AnimatePresence>
 
-      <Controls />
+      {!useIframeFallback && <Controls />}
     </div>
   )
 }

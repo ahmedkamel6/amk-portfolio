@@ -211,9 +211,9 @@ export function ProjectDetailPage({
 
             {/* Cover / Video */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="relative mt-12 w-full"
             >
               {primaryVideoUrl ? (
