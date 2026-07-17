@@ -33,6 +33,7 @@ const NAV = [
     { label: 'Showreel', href: '/admin/showreel', icon: Film },
     { label: 'Services', href: '/admin/services', icon: Briefcase },
     { label: 'Projects', href: '/admin/projects', icon: FolderKanban },
+    { label: 'Tool Logos', href: '/admin/tool-logos', icon: Palette },
     { label: 'Before / After', href: '/admin/before-after', icon: GitCompare },
     { label: 'Workflow', href: '/admin/workflow', icon: Workflow },
     { label: 'Skills', href: '/admin/skills', icon: Award },
@@ -43,6 +44,8 @@ const NAV = [
   { section: 'System', items: [
     { label: 'Appearance', href: '/admin/appearance', icon: Palette },
     { label: 'Settings', href: '/admin/settings', icon: User },
+    { label: 'Security', href: '/admin/security', icon: LayoutDashboard },
+    { label: 'Activity Log', href: '/admin/activity-log', icon: GitCompare },
   ]},
 ]
 

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { db } from '@/lib/db'
-import { getProjectBySlug, getRelatedProjects } from '@/lib/portfolio/db'
+import { getProjectBySlug, getRelatedProjects, getToolLogos } from '@/lib/portfolio/db'
 import { ProjectDetailPage } from '@/components/portfolio/ProjectDetailPage'
 
 export const revalidate = 60
@@ -44,6 +44,7 @@ export default async function ProjectPage({ params }: PageProps) {
     notFound()
   }
   const related = await getRelatedProjects(slug, project.category, 3)
+  const toolLogos = await getToolLogos()
 
-  return <ProjectDetailPage project={project} related={related} />
+  return <ProjectDetailPage project={project} related={related} toolLogos={toolLogos} />
 }

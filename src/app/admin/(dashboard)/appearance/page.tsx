@@ -188,6 +188,8 @@ export default function AdminAppearancePage() {
             { id: 'showShowreel', label: 'Showreel' },
             { id: 'showServices', label: 'Services' },
             { id: 'showProjects', label: 'Featured Projects' },
+            { id: 'showArchive3D', label: '3D Archive (Projects Page)' },
+            { id: 'showArchiveTimeline', label: 'Timeline Archive (Projects Page)' },
             { id: 'showBeforeAfter', label: 'Before / After' },
             { id: 'showWorkflow', label: 'Workflow' },
             { id: 'showSkills', label: 'Skills' },

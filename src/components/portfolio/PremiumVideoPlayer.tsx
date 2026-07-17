@@ -81,7 +81,7 @@ export function PremiumVideoPlayer({ src, poster, aspectRatio = 'video', classNa
       ref={containerRef}
       className={cn(
         "group relative w-full overflow-hidden rounded-3xl border border-[var(--border)] bg-black",
-        aspectRatio === '9/16' ? "aspect-[9/16] max-w-md mx-auto" : "aspect-video",
+        aspectRatio === '9/16' ? "aspect-[9/16] max-w-[280px] sm:max-w-sm md:max-w-md mx-auto" : "aspect-video",
         className
       )}
       onMouseEnter={() => setIsHovering(true)}

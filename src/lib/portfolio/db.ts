@@ -286,17 +286,29 @@ export async function getAppearance(): Promise<ThemeSettings> {
     orderAbout: (row as any).orderAbout ?? 3,
     orderContact: (row as any).orderContact ?? 4,
     customLogoUrl: (row as any).customLogoUrl || null,
+    showArchive3D: (row as any).showArchive3D ?? true,
+    showArchiveTimeline: (row as any).showArchiveTimeline ?? true,
   }
 }
+
+export async function getToolLogos() {
+  const rows = await db.toolLogo.findMany()
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    imageUrl: r.imageUrl,
+  }))
+}
+
 
 /** Fetch all site content in parallel — used by the home page server component */
 export async function getSiteContent() {
   const [
     hero, showreel, services, projects, beforeAfter,
-    workflow, skills, about, testimonials, contact, appearance,
+    workflow, skills, about, testimonials, contact, appearance, toolLogos
   ] = await Promise.all([
     getHero(), getShowreel(), getServices(), getProjects(), getBeforeAfter(),
-    getWorkflow(), getSkills(), getAboutContent(), getTestimonials(), getContact(), getAppearance(),
+    getWorkflow(), getSkills(), getAboutContent(), getTestimonials(), getContact(), getAppearance(), getToolLogos()
   ])
-  return { hero, showreel, services, projects, beforeAfter, workflow, skills, about, testimonials, contact, theme: appearance }
+  return { hero, showreel, services, projects, beforeAfter, workflow, skills, about, testimonials, contact, theme: appearance, toolLogos }
 }

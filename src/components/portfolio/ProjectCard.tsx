@@ -29,7 +29,7 @@ export function getDriveThumbnailUrl(url: string | null | undefined): string | n
   return url;
 }
 
-export function ProjectCard({ project, index }: { project: Project; index: number }) {
+export function ProjectCard({ project, index, toolLogos }: { project: Project; index: number; toolLogos?: any[] }) {
   const ref = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.2, margin: "0px 0px -50px 0px" })
@@ -66,7 +66,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       transition={{ duration: 0.7, delay: isMobile ? (index % 2) * 0.05 : (index % 5) * 0.1, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="group relative"
+      className="group relative h-full w-full"
       style={{ willChange: "transform, opacity" }}
     >
       <Link href={`/projects/${p.slug}`} className="block h-full w-full">
@@ -82,24 +82,18 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
 
           {/* Hover Video Preview */}
           {hovered && !isMobile && directVideoUrl && (
-            <div className="absolute inset-0 h-full w-full overflow-hidden z-0 pointer-events-none">
-              {directVideoUrl.includes('google.com') && (directVideoUrl.match(/id=([a-zA-Z0-9_-]+)/) || directVideoUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)) ? (
-                <iframe
-                  src={`https://drive.google.com/file/d/${(directVideoUrl.match(/id=([a-zA-Z0-9_-]+)/) || directVideoUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/))![1]}/preview?autoplay=1&muted=1`}
-                  className="absolute inset-0 h-[120%] w-[120%] -left-[10%] -top-[10%] border-0 opacity-90"
-                  allow="autoplay"
-                  title="Hover Preview"
-                />
-              ) : (
-                <video
-                  src={directVideoUrl}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              )}
+            <div className="absolute inset-0 h-full w-full overflow-hidden z-0 pointer-events-none bg-black/20">
+              <video
+                src={directVideoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
+                onCanPlay={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+              />
             </div>
           )}
 
@@ -141,11 +135,21 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
               </p>
               
               <div className="flex flex-wrap gap-1.5 mb-2">
-                {project.toolsUsed.slice(0, 3).map((t) => (
-                  <span key={t} className="rounded-sm bg-white/10 px-1.5 py-0.5 text-[9px] text-white/90">
-                    {t}
-                  </span>
-                ))}
+                {project.toolsUsed.slice(0, 4).map((t) => {
+                  const logoInfo = toolLogos?.find((tl) => tl.name.toLowerCase() === t.toLowerCase())
+                  if (logoInfo?.imageUrl) {
+                    return (
+                      <div key={t} title={t} className="h-6 w-6 rounded border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center overflow-hidden shrink-0">
+                        <img src={logoInfo.imageUrl} alt={t} className="h-4 w-4 object-contain" />
+                      </div>
+                    )
+                  }
+                  return (
+                    <span key={t} className="rounded border border-white/10 bg-black/50 px-1.5 py-0.5 text-[9px] text-white/90 flex items-center backdrop-blur-md h-6">
+                      {t}
+                    </span>
+                  )
+                })}
               </div>
             </motion.div>
           </div>

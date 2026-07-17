@@ -11,9 +11,11 @@ import { PremiumVideoPlayer } from './PremiumVideoPlayer'
 export function ProjectDetailPage({
   project,
   related,
+  toolLogos,
 }: {
   project: ProjectDetail
   related: ProjectDetail[]
+  toolLogos?: any[]
 }) {
   const router = useRouter()
 
@@ -88,7 +90,7 @@ export function ProjectDetailPage({
             initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-6 font-display text-5xl font-bold leading-[0.95] tracking-tight text-[var(--text-primary)] md:text-7xl"
+            className="mt-6 font-display text-5xl font-bold leading-[0.95] tracking-tight text-[var(--text-primary)] md:text-7xl break-words break-all sm:break-normal"
           >
             {project.title}
           </motion.h1>
@@ -115,7 +117,7 @@ export function ProjectDetailPage({
               src={primaryVideoUrl} 
               poster={posterUrl}
               aspectRatio={primaryAspect}
-              autoPlay={false}
+              autoPlay={true}
             />
           ) : posterUrl ? (
             <div className="relative aspect-video overflow-hidden rounded-3xl border border-[var(--border)] bg-black" style={{ height: 'min(80vh, 800px)' }}>
@@ -173,11 +175,22 @@ export function ProjectDetailPage({
                 Tools Used
               </h3>
               <div className="mt-4 flex flex-wrap gap-2">
-                {project.toolsUsed.map((tool) => (
-                  <span key={tool} className="rounded-md border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 py-1 text-xs text-[var(--text-secondary)]">
-                    {tool}
-                  </span>
-                ))}
+                {project.toolsUsed.map((tool) => {
+                  const logoInfo = toolLogos?.find((tl) => tl.name.toLowerCase() === tool.toLowerCase())
+                  if (logoInfo?.imageUrl) {
+                    return (
+                      <div key={tool} className="flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 py-1">
+                        <img src={logoInfo.imageUrl} alt={tool} className="h-4 w-4 object-contain" />
+                        <span className="text-xs text-[var(--text-secondary)]">{tool}</span>
+                      </div>
+                    )
+                  }
+                  return (
+                    <span key={tool} className="rounded-md border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 py-1 text-xs text-[var(--text-secondary)]">
+                      {tool}
+                    </span>
+                  )
+                })}
               </div>
             </div>
           </aside>

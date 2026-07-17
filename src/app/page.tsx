@@ -45,7 +45,7 @@ export default async function Home() {
         <Hero hero={content.hero} theme={content.theme} />
         {t.showShowreel !== false && <Showreel showreel={content.showreel} index={getIndex()} />}
         {t.showServices !== false && <Services services={content.services} index={getIndex()} />}
-        {t.showProjects !== false && <FeaturedProjects projects={featuredProjects} index={getIndex()} />}
+        {t.showProjects !== false && <FeaturedProjects projects={featuredProjects} toolLogos={content.toolLogos} index={getIndex()} />}
         {t.showBeforeAfter !== false && <BeforeAfter beforeAfter={content.beforeAfter} index={getIndex()} />}
         {t.showWorkflow !== false && <Workflow workflow={content.workflow} index={getIndex()} />}
         {t.showSkills !== false && <Skills skills={content.skills} index={getIndex()} />}

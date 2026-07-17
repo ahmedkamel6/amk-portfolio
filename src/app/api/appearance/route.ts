@@ -16,6 +16,8 @@ export async function GET() {
     showShowreel: row.showShowreel,
     showServices: row.showServices,
     showProjects: row.showProjects,
+    showArchive3D: (row as any).showArchive3D ?? true,
+    showArchiveTimeline: (row as any).showArchiveTimeline ?? true,
     showBeforeAfter: row.showBeforeAfter,
     showWorkflow: row.showWorkflow,
     showSkills: row.showSkills,
@@ -47,6 +49,8 @@ export const PUT = withErrorHandler(async (req: NextRequest) => {
   if (body.showShowreel !== undefined) patch.showShowreel = Boolean(body.showShowreel)
   if (body.showServices !== undefined) patch.showServices = Boolean(body.showServices)
   if (body.showProjects !== undefined) patch.showProjects = Boolean(body.showProjects)
+  if (body.showArchive3D !== undefined) patch.showArchive3D = Boolean(body.showArchive3D)
+  if (body.showArchiveTimeline !== undefined) patch.showArchiveTimeline = Boolean(body.showArchiveTimeline)
   if (body.showBeforeAfter !== undefined) patch.showBeforeAfter = Boolean(body.showBeforeAfter)
   if (body.showWorkflow !== undefined) patch.showWorkflow = Boolean(body.showWorkflow)
   if (body.showSkills !== undefined) patch.showSkills = Boolean(body.showSkills)
@@ -74,6 +78,8 @@ export const PUT = withErrorHandler(async (req: NextRequest) => {
       showShowreel: Boolean(body.showShowreel ?? true),
       showServices: Boolean(body.showServices ?? true),
       showProjects: Boolean(body.showProjects ?? true),
+      showArchive3D: Boolean(body.showArchive3D ?? true),
+      showArchiveTimeline: Boolean(body.showArchiveTimeline ?? true),
       showBeforeAfter: Boolean(body.showBeforeAfter ?? true),
       showWorkflow: Boolean(body.showWorkflow ?? true),
       showSkills: Boolean(body.showSkills ?? true),

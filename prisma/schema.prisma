@@ -1,6 +1,3 @@
-// Prisma schema for AMK Portfolio
-// SQLite for local dev — switch to postgresql in production via DATABASE_URL
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,20 +9,20 @@ datasource db {
 
 /// Single row (id = "singleton") — Hero section content
 model HeroContent {
-  id             String   @id @default("singleton")
-  name           String
-  nameHighlight  String
-  eyebrow        String
-  badge          String
+  id                String   @id @default("singleton")
+  name              String
+  nameHighlight     String
+  eyebrow           String
+  badge             String
   /// comma-separated roles
-  roles          String
+  roles             String
   /// JSON array of { value, label }
-  statsJson      String
-  primaryCtaLabel String
-  primaryCtaHref  String
+  statsJson         String
+  primaryCtaLabel   String
+  primaryCtaHref    String
   secondaryCtaLabel String
   secondaryCtaHref  String
-  updatedAt      DateTime @updatedAt
+  updatedAt         DateTime @updatedAt
 }
 
 /// Single row — Showreel section content
@@ -115,13 +112,22 @@ model WorkflowStep {
 }
 
 model Skill {
-  id       String   @id @default(cuid())
-  name     String
-  short    String
-  level    Int      @default(80)
-  color    String
-  category String
-  order    Int      @default(0)
+  id        String   @id @default(cuid())
+  name      String
+  short     String
+  level     Int      @default(80)
+  color     String
+  category  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Logos for tools (e.g., Premiere Pro, Blender) used in projects
+model ToolLogo {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -139,34 +145,34 @@ model AboutContent {
 }
 
 model Testimonial {
-  id       String   @id @default(cuid())
-  name     String
-  role     String
-  company  String
-  quote    String
-  initials String
-  color    String
-  rating   Int      @default(5)
-  photoUrl String?
-  order    Int      @default(0)
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  company   String
+  quote     String
+  initials  String
+  color     String
+  rating    Int      @default(5)
+  photoUrl  String?
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 /// Single row — Contact section
 model ContactInfo {
-  id             String   @id @default("singleton")
-  title          String
-  titleHighlight String
-  description    String
-  ctaLabel       String
-  ctaHref        String
-  footerName     String
-  footerTagline  String
+  id              String   @id @default("singleton")
+  title           String
+  titleHighlight  String
+  description     String
+  ctaLabel        String
+  ctaHref         String
+  footerName      String
+  footerTagline   String
   footerCopyright String
   /// JSON array of { iconName, label, handle, href }
-  channelsJson   String
-  updatedAt      DateTime @updatedAt
+  channelsJson    String
+  updatedAt       DateTime @updatedAt
 }
 
 /// Single row — Appearance / theme settings
@@ -179,26 +185,22 @@ model AppearanceSettings {
   particleCount    Int      @default(600)
   gridOpacity      Float    @default(0.15)
   glowIntensity    Float    @default(1)
-  
-  // Section Visibility
   showShowreel     Boolean  @default(true)
   showServices     Boolean  @default(true)
   showProjects     Boolean  @default(true)
+  showArchive3D    Boolean  @default(true)
+  showArchiveTimeline Boolean @default(true)
   showBeforeAfter  Boolean  @default(true)
   showWorkflow     Boolean  @default(true)
   showSkills       Boolean  @default(true)
   showAbout        Boolean  @default(true)
   showTestimonials Boolean  @default(true)
   showContact      Boolean  @default(true)
-
-  // Navbar Ordering
   orderProjects    Int      @default(1)
   orderSkills      Int      @default(2)
   orderAbout       Int      @default(3)
   orderContact     Int      @default(4)
-
   customLogoUrl    String?
-
   updatedAt        DateTime @updatedAt
 }
 
@@ -211,30 +213,96 @@ model AdminUser {
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  totpEnabled  Boolean  @default(false)
+  totpSecret   String?
 }
 
 /// Session for admin auth
 model AdminSession {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  userAgent String?
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  userAgent    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  browser      String?
+  city         String?
+  country      String?
+  device       String?
+  hashedToken  String   @unique
+  ip           String?
+  language     String?
+  lastActivity DateTime @default(now())
+  os           String?
+  platform     String?
+  timezone     String?
 
-  @@index([token])
+  @@index([hashedToken])
   @@index([userId])
 }
 
 /// Password reset tokens
 model PasswordResetToken {
-  id         String   @id @default(cuid())
-  tokenHash  String   @unique
-  userId     String
-  expiresAt  DateTime
-  used       Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 
   @@index([tokenHash])
   @@index([userId])
+}
+
+/// Single-use recovery codes for 2FA
+model RecoveryCode {
+  id         String   @id @default(cuid())
+  userId     String
+  hashedCode String
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// Rate limiting for login attempts
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  ip        String
+  email     String
+  createdAt DateTime @default(now())
+
+  @@index([ip, email, createdAt])
+}
+
+/// Trusted devices to bypass new-device notifications
+model TrustedDevice {
+  id                String   @id @default(cuid())
+  userId            String
+  deviceFingerprint String
+  browser           String?
+  os                String?
+  ip                String?
+  lastUsedAt        DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@index([userId, deviceFingerprint])
+}
+
+/// Complete audit log system
+model AuditLog {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+  userId    String?
+  action    String
+  ip        String?
+  browser   String?
+  os        String?
+  device    String?
+  country   String?
+  city      String?
+  metadata  String?
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
 }

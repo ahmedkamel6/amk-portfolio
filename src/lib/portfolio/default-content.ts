@@ -120,6 +120,8 @@ export interface ThemeSettings {
   showShowreel?: boolean
   showServices?: boolean
   showProjects?: boolean
+  showArchive3D?: boolean
+  showArchiveTimeline?: boolean
   showBeforeAfter?: boolean
   showWorkflow?: boolean
   showSkills?: boolean

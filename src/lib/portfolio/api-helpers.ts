@@ -20,6 +20,7 @@ export async function requireAuthOr401(): Promise<NextResponse | null> {
 export function revalidateSite() {
   try {
     revalidatePath('/', 'page')
+    revalidatePath('/projects', 'page')
     revalidatePath('/projects/[slug]', 'page')
   } catch (e) {
     // revalidatePath can throw in certain Next.js contexts (e.g. Turbopack dev)

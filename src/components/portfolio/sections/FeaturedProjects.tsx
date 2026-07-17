@@ -6,11 +6,11 @@ import { useRef } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { SectionHeading } from '../SectionHeading'
 import type { Project } from '@/lib/portfolio/default-content'
-import { ProjectCard } from '../ProjectCard'
+import { InfiniteCarousel } from '../InfiniteCarousel'
 
-export function FeaturedProjects({ projects, index = '03' }: { projects: Project[], index?: string }) {
-  // Show max 10 projects for the 5-col, 2-row grid
-  const featuredProjects = projects.filter(p => p.featured).slice(0, 10);
+export function FeaturedProjects({ projects, toolLogos, index = '03' }: { projects: Project[], toolLogos?: any[], index?: string }) {
+  // We want to show all featured projects in the carousel
+  const featuredProjects = projects.filter(p => p.featured);
 
   return (
     <section id="projects" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48">
@@ -18,21 +18,23 @@ export function FeaturedProjects({ projects, index = '03' }: { projects: Project
         <div className="absolute left-1/4 top-1/3 h-[60vh] w-[40vw] rounded-full opacity-20 blur-[120px]" style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--emerald-glow) 20%, transparent), transparent 70%)' }} />
       </div>
       
-      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6">
-        <SectionHeading 
-          index={index} 
-          eyebrow="Featured Work" 
-          title={<>Selected <span className="text-gradient-emerald">Reels</span></>} 
-          description="A curated selection of cinematic cuts and motion design — optimized for the feed." 
-        />
+      <div className="relative z-10 w-full">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
+          <SectionHeading 
+            index={index} 
+            eyebrow="Featured Work" 
+            title={<>Selected <span className="text-gradient-emerald">Reels</span></>} 
+            description="A curated selection of cinematic cuts and motion design — optimized for the feed." 
+          />
+        </div>
         
-        {/* Reels Grid: 2 cols on mobile, 3 on tablet, 5 on desktop */}
-        <div className="mt-16 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-4 md:gap-5">
-          {featuredProjects.map((p, i) => <ProjectCard key={p.id} project={p} index={i} />)}
+        {/* Infinite 3D Carousel instead of static grid */}
+        <div className="mt-12 w-full">
+          <InfiniteCarousel projects={featuredProjects} toolLogos={toolLogos} />
         </div>
         
         <motion.div 
-          className="mt-20 flex justify-center" 
+          className="mt-12 flex justify-center" 
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }} 
           viewport={{ once: true }} 

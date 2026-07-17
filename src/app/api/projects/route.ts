@@ -42,7 +42,14 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   if (auth) return auth
   const body = await req.json()
   const count = await db.project.count()
-  const slug = body.slug || slugify(body.title)
+  let slug = body.slug || slugify(body.title)
+  
+  // Ensure slug is unique
+  const existing = await db.project.findUnique({ where: { slug } })
+  if (existing) {
+    slug = `${slug}-${Math.random().toString(36).substring(2, 6)}`
+  }
+
   const row = await db.project.create({
     data: {
       slug,
