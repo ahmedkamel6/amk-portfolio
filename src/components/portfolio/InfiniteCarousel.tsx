@@ -9,9 +9,9 @@ import { ProjectCard } from './ProjectCard'
 export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[], toolLogos?: any[] }) {
   if (!projects || projects.length === 0) return null;
 
-  // Multiply to ensure enough items for a flawless infinite marquee without overloading the DOM
+  // Limit the multiplier to 18 to avoid React mounting too many Framer Motion elements on initial load
   let multipliedProjects: Project[] = [...projects];
-  while (multipliedProjects.length < 40) {
+  while (multipliedProjects.length < 18) {
     multipliedProjects = [...multipliedProjects, ...projects];
   }
 
@@ -65,7 +65,10 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
     emblaApi.on('reInit', onScroll)
 
     const handleWheel = (e: WheelEvent) => {
-      // Allow horizontal scrolling or vertical scrolling to flip between videos
+      // Prevent default page scroll if scrolling horizontally, OR if we want vertical scroll to move carousel
+      // Only do this when hovering over the carousel
+      e.preventDefault();
+      
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         if (e.deltaY > 0) emblaApi.scrollNext()
         else emblaApi.scrollPrev()
@@ -77,7 +80,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
 
     const node = emblaApi.rootNode()
     if (node) {
-      node.addEventListener('wheel', handleWheel, { passive: true })
+      node.addEventListener('wheel', handleWheel, { passive: false })
     }
 
     return () => {
@@ -103,6 +106,13 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
               <div
                 key={`${p.id}-${index}`}
                 className="w-[200px] sm:w-[240px] md:w-[280px] flex-shrink-0 flex-grow-0 min-w-0 transition-none"
+                onClickCapture={(e) => {
+                  // Prevent click if the user was dragging the carousel
+                  if (emblaApi && !emblaApi.clickAllowed()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
                 style={{
                   // The initial styles will be overwritten instantly by onScroll on mount
                   transform: `scale(0.55)`,
