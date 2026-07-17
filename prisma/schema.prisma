@@ -177,31 +177,31 @@ model ContactInfo {
 
 /// Single row — Appearance / theme settings
 model AppearanceSettings {
-  id               String   @id @default("singleton")
-  mode             String   @default("dark")
-  accent           String   @default("#00D084")
-  accentSoft       String   @default("#00FF9D")
-  background       String   @default("#0B0B0B")
-  particleCount    Int      @default(600)
-  gridOpacity      Float    @default(0.15)
-  glowIntensity    Float    @default(1)
-  showShowreel     Boolean  @default(true)
-  showServices     Boolean  @default(true)
-  showProjects     Boolean  @default(true)
-  showArchive3D    Boolean  @default(true)
-  showArchiveTimeline Boolean @default(true)
-  showBeforeAfter  Boolean  @default(true)
-  showWorkflow     Boolean  @default(true)
-  showSkills       Boolean  @default(true)
-  showAbout        Boolean  @default(true)
-  showTestimonials Boolean  @default(true)
-  showContact      Boolean  @default(true)
-  orderProjects    Int      @default(1)
-  orderSkills      Int      @default(2)
-  orderAbout       Int      @default(3)
-  orderContact     Int      @default(4)
-  customLogoUrl    String?
-  updatedAt        DateTime @updatedAt
+  id                  String   @id @default("singleton")
+  mode                String   @default("dark")
+  accent              String   @default("#00D084")
+  accentSoft          String   @default("#00FF9D")
+  background          String   @default("#0B0B0B")
+  particleCount       Int      @default(600)
+  gridOpacity         Float    @default(0.15)
+  glowIntensity       Float    @default(1)
+  showShowreel        Boolean  @default(true)
+  showServices        Boolean  @default(true)
+  showProjects        Boolean  @default(true)
+  showBeforeAfter     Boolean  @default(true)
+  showWorkflow        Boolean  @default(true)
+  showSkills          Boolean  @default(true)
+  showAbout           Boolean  @default(true)
+  showTestimonials    Boolean  @default(true)
+  showContact         Boolean  @default(true)
+  orderProjects       Int      @default(1)
+  orderSkills         Int      @default(2)
+  orderAbout          Int      @default(3)
+  orderContact        Int      @default(4)
+  customLogoUrl       String?
+  updatedAt           DateTime @updatedAt
+  showArchive3D       Boolean  @default(true)
+  showArchiveTimeline Boolean  @default(true)
 }
 
 /// Admin user for authentication

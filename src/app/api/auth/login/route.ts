@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
     // TODO: Verify TOTP Code here
     // For now, if totpCode is sent but we haven't wired the TOTP module into the route yet,
     // we would import verifyTOTP and decrypt secret.
+    const { verifyTOTP } = await import('@/lib/portfolio/totp');
     const { decrypt } = await import('@/lib/portfolio/encryption');
-    const { verifyTOTP, hashRecoveryCode } = await import('@/lib/portfolio/totp');
     
     if (user.totpSecret) {
       const decryptedSecret = decrypt(user.totpSecret);
@@ -60,14 +60,22 @@ export async function POST(req: NextRequest) {
       let usedRecoveryCodeId: string | null = null;
       
       if (!isValidTotp) {
-        // Check recovery codes
-        const hashedAttempt = hashRecoveryCode(totpCode);
-        const recovery = await db.recoveryCode.findFirst({
-          where: { userId: user.id, hashedCode: hashedAttempt, used: false }
+        // Fallback to Recovery Code
+        const recoveries = await db.recoveryCode.findMany({
+          where: { userId: user.id, used: false },
         });
-        if (recovery) {
-          isValidRecovery = true;
-          usedRecoveryCodeId = recovery.id;
+        
+        for (const recovery of recoveries) {
+          try {
+            const decryptedCode = decrypt(recovery.hashedCode);
+            if (decryptedCode === totpCode) {
+              isValidRecovery = true;
+              usedRecoveryCodeId = recovery.id;
+              break;
+            }
+          } catch (err) {
+            // ignore decryption error for individual codes
+          }
         }
       }
 

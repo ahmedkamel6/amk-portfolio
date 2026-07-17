@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { getCsrfToken } from '@/lib/portfolio/use-api'
 import {
   LayoutDashboard,
   User,
@@ -116,7 +117,10 @@ export function AdminSidebarClient() {
         </Link>
         <button
           onClick={async () => {
-            await fetch('/api/auth/logout', { method: 'POST' })
+            await fetch('/api/auth/logout', { 
+              method: 'POST',
+              headers: { 'x-csrf-token': getCsrfToken() }
+            })
             window.location.href = '/admin/login'
           }}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:bg-red-500/10 hover:text-red-400"

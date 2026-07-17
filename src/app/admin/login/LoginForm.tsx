@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lock, User, ArrowRight, AlertCircle } from 'lucide-react'
+import { Lock, User, ArrowRight, AlertCircle, Loader2 } from 'lucide-react'
+import { getCsrfToken } from '@/lib/portfolio/use-api'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -18,7 +19,10 @@ export default function LoginForm() {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken()
+        },
         body: JSON.stringify({ username, password }),
       })
       if (res.ok) {

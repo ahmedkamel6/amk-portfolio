@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { AdminPageHeader, AdminCard } from '@/components/admin/ui'
+import { getCsrfToken } from '@/lib/portfolio/use-api'
 import { defaultContent } from '@/lib/portfolio/default-content'
 
 const STATS = [
@@ -127,7 +128,10 @@ export default function AdminDashboardPage() {
       setMigrating(true)
       const res = await fetch('/api/migrate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken()
+        },
         body: JSON.stringify(content),
       })
       const result = await res.json()
@@ -151,7 +155,10 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch('/api/migrate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken()
+        },
         body: JSON.stringify(defaultContent),
       })
       if (res.ok) {

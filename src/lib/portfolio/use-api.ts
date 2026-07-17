@@ -3,6 +3,15 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 
 /**
+ * Helper to get the CSRF token from cookies
+ */
+export function getCsrfToken(): string {
+  if (typeof document === 'undefined') return ''
+  const match = document.cookie.match(new RegExp('(^| )csrfToken=([^;]+)'))
+  return match ? match[2] : ''
+}
+
+/**
  * Hook for fetching + mutating a content collection via the API.
  * Used by admin editor pages. Re-fetches after mutations.
  */
@@ -33,7 +42,10 @@ export function useApi<T>(endpoint: string) {
     const url = method === 'DELETE' && body?.id ? `${endpoint}?id=${body.id}` : endpoint
     const res = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-csrf-token': getCsrfToken()
+      },
       body: method === 'DELETE' ? undefined : JSON.stringify(body),
     })
     if (!res.ok) {
@@ -112,7 +124,10 @@ export function useSingleton<T>(endpoint: string) {
         try {
           const res = await fetch(endpoint, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'x-csrf-token': getCsrfToken()
+            },
             body: JSON.stringify(bodyToSend),
           })
           if (!res.ok) {

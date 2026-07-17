@@ -214,7 +214,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
         >
           <MagneticButton
             as="a"
-            href="#projects"
+            href={hero.primaryCta.href}
             className="glow-emerald"
             strength={0.5}
           >
@@ -222,7 +222,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
             {hero.primaryCta.label}
           </MagneticButton>
 
-          <MagneticButton as="a" href="#skills" variant="ghost" strength={0.3}>
+          <MagneticButton as="a" href={hero.secondaryCta.href} variant="ghost" strength={0.3}>
             {hero.secondaryCta.label}
             <ArrowDown className="h-3.5 w-3.5 rotate-[-45deg]" />
           </MagneticButton>

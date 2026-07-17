@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, ArrowRight, AlertCircle, ArrowLeft } from 'lucide-react'
+import { getCsrfToken } from '@/lib/portfolio/use-api'
 import Link from 'next/link'
 
 export default function ForgotPasswordPage() {
@@ -19,7 +20,10 @@ export default function ForgotPasswordPage() {
     try {
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken()
+        },
         body: JSON.stringify({ email }),
       })
       const data = await res.json()

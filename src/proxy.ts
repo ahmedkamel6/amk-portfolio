@@ -6,8 +6,8 @@ const publicPaths = ['/admin/login', '/admin/setup', '/admin/forgot-password', '
 
 // Middleware runs on Edge, so we can't easily query Prisma directly.
 // We handle DB authentication inside the App Router layouts/route handlers.
-// The middleware enforces CSRF and Security Headers.
-export async function middleware(request: NextRequest) {
+// The proxy enforces CSRF and Security Headers.
+export async function proxy(request: NextRequest) {
   const url = request.nextUrl.pathname
 
   const isApi = url.startsWith('/api/')
@@ -48,39 +48,49 @@ export async function middleware(request: NextRequest) {
   // Replace newlines with space
   response.headers.set('Content-Security-Policy', cspHeader.replace(/\s{2,}/g, ' ').trim())
 
-  // CSRF Protection for state-changing API endpoints
+  // CSRF Protection
+  let csrfToken = request.cookies.get('csrfToken')?.value
+  
+  // Generate a CSRF token if one doesn't exist
+  if (!csrfToken) {
+    csrfToken = crypto.randomUUID()
+    // We add the Set-Cookie header to the response
+    response.cookies.set('csrfToken', csrfToken, {
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      // NOT HttpOnly so the frontend can read it and attach it to the header
+      httpOnly: false,
+    })
+  }
+
+  // Validate CSRF for state-changing API endpoints
   if (isApi && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
     const origin = request.headers.get('origin')
     const host = request.headers.get('host')
     const referer = request.headers.get('referer')
+    const headerCsrf = request.headers.get('x-csrf-token')
 
-    let isValid = false
+    let isOriginValid = false
     
-    // In local dev, origin might be http://localhost:3000, host localhost:3000
-    // In production, origin might be https://domain.com, host domain.com
     if (origin) {
       try {
         const originUrl = new URL(origin)
-        if (originUrl.host === host) {
-          isValid = true
-        }
+        if (originUrl.host === host) isOriginValid = true
       } catch (e) {}
     } else if (referer) {
       try {
         const refererUrl = new URL(referer)
-        if (refererUrl.host === host) {
-          isValid = true
-        }
+        if (refererUrl.host === host) isOriginValid = true
       } catch (e) {}
-    } else {
-      // If neither origin nor referer is present, block it.
-      // Most modern browsers send at least one.
-      isValid = false
     }
 
-    if (!isValid && process.env.NODE_ENV === 'production') {
+    const isCsrfValid = csrfToken && headerCsrf && csrfToken === headerCsrf
+
+    // Both origin/referer checking and Double Submit Cookie validation
+    if (!isCsrfValid || (!isOriginValid && process.env.NODE_ENV === 'production')) {
       return new NextResponse(
-        JSON.stringify({ error: 'CSRF validation failed. Invalid Origin or Referer.' }),
+        JSON.stringify({ error: 'CSRF validation failed.' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
       )
     }

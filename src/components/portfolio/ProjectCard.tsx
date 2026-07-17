@@ -8,12 +8,14 @@ import type { Project } from '@/lib/portfolio/default-content'
 import { useIsMobile } from '@/hooks/use-mobile'
 
 // Helper to convert Google Drive share links to direct stream/download links
-export function getDirectDriveUrl(url: string | null | undefined): string | null {
+export function getDirectDriveUrl(url: string | null | undefined, preview: boolean = false): string | null {
   if (!url) return null;
   const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
-    // We MUST use export=download. export=view returns an HTML page.
-    return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+    // Pipe it through our proxy-video route to avoid browser CORS/X-Frame-Options blocking
+    // Adding confirm=t bypasses the large file virus scan warning
+    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
+    return `/api/proxy-video?url=${encodeURIComponent(directUrl)}${preview ? '&quality=360p' : ''}`;
   }
   return url;
 }
@@ -39,15 +41,13 @@ export function ProjectCard({ project, index, toolLogos }: { project: Project; i
 
   // Use the new driveUrl or fallback to old videoUrl
   const p = project as any
-  const directVideoUrl = getDirectDriveUrl(p.driveUrl) || p.videoUrl;
+  // We request 360p quality for the preview so it loads extremely fast without buffering
+  const directVideoUrl = getDirectDriveUrl(p.driveUrl, true) || p.videoUrl;
   const rawPoster = p.thumbnailUrl || p.coverImage || undefined;
   const posterUrl = getDriveThumbnailUrl(rawPoster) || rawPoster;
 
   const handleMouseEnter = () => {
     setHovered(true)
-    if (videoRef.current && !videoError) {
-      videoRef.current.play().catch(() => {})
-    }
   }
 
   const handleMouseLeave = () => {
@@ -57,6 +57,7 @@ export function ProjectCard({ project, index, toolLogos }: { project: Project; i
       videoRef.current.currentTime = 0
     }
   }
+
 
   return (
     <motion.article
@@ -84,15 +85,24 @@ export function ProjectCard({ project, index, toolLogos }: { project: Project; i
           {hovered && !isMobile && directVideoUrl && (
             <div className="absolute inset-0 h-full w-full overflow-hidden z-0 pointer-events-none bg-black/20">
               <video
+                ref={(el) => {
+                  if (el) {
+                    // @ts-ignore
+                    videoRef.current = el;
+                    el.play().catch(() => {});
+                  }
+                }}
                 src={directVideoUrl}
                 autoPlay
                 loop
                 muted
                 playsInline
+                crossOrigin="anonymous"
                 className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
                 onCanPlay={(e) => {
                   e.currentTarget.style.opacity = '1';
                 }}
+                onError={() => setVideoError(true)}
               />
             </div>
           )}

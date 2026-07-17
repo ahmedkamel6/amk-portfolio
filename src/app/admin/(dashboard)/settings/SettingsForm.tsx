@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getCsrfToken } from '@/lib/portfolio/use-api'
 import { useRouter } from 'next/navigation'
 import { AdminPageHeader, AdminCard, Field } from '@/components/admin/ui'
 import { Save, LogOut, AlertCircle, CheckCircle2 } from 'lucide-react'
@@ -31,8 +32,11 @@ export default function SettingsForm({ currentEmail }: { currentEmail: string })
       }
 
       const res = await fetch('/api/auth/update-account', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken()
+        },
         body: JSON.stringify(payload),
       })
       const data = await res.json()
@@ -56,7 +60,12 @@ export default function SettingsForm({ currentEmail }: { currentEmail: string })
     if (!confirm('Are you sure you want to log out from all devices? You will be signed out immediately.')) return
 
     try {
-      const res = await fetch('/api/auth/logout-all', { method: 'POST' })
+      const res = await fetch('/api/auth/logout-all', { 
+        method: 'POST',
+        headers: {
+          'x-csrf-token': getCsrfToken()
+        }
+      })
       if (res.ok) {
         router.push('/admin/login')
       } else {

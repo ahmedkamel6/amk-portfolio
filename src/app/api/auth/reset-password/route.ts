@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from '@/lib/portfolio/password'
 
 export async function POST(req: NextRequest) {
   const { token, password } = await req.json()
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Token has expired' }, { status: 400 })
   }
 
-  const passwordHash = bcrypt.hashSync(password, 10)
+  const passwordHash = await hashPassword(password)
 
   // Use a transaction to ensure atomic updates
   await db.$transaction(async (tx) => {

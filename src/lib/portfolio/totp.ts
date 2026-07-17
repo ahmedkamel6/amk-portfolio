@@ -45,10 +45,11 @@ export function generateRecoveryCodes(count: number = 10): string[] {
   return codes;
 }
 
+import { encrypt } from './encryption';
+
 /**
- * Hashes a recovery code for secure DB storage.
- * Uses SHA-256 for fast hashing of recovery codes, as they are high-entropy and single-use.
+ * Encrypts a recovery code for secure DB storage.
  */
-export function hashRecoveryCode(code: string): string {
-  return crypto.createHash('sha256').update(code).digest('hex');
+export function encryptRecoveryCode(code: string): string {
+  return encrypt(code);
 }

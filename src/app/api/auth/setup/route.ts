@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from '@/lib/portfolio/password'
 
 // Simple rate limit in-memory for setup to prevent spam
 const setupRateLimit = new Map<string, number>()
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
   }
 
-  const passwordHash = bcrypt.hashSync(password, 10)
+  const passwordHash = await hashPassword(password)
   
   await db.adminUser.create({
     data: {

@@ -2,7 +2,8 @@
 
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Lock, ArrowRight, AlertCircle } from 'lucide-react'
+import { Lock, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { getCsrfToken } from '@/lib/portfolio/use-api'
 import Link from 'next/link'
 
 function ResetPasswordForm() {
@@ -35,7 +36,10 @@ function ResetPasswordForm() {
     try {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken()
+        },
         body: JSON.stringify({ token, password }),
       })
       const data = await res.json()

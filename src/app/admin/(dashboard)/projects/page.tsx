@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { AdminPageHeader, Field, AdminCard } from '@/components/admin/ui'
 import { useApi } from '@/lib/portfolio/use-api'
-import { Plus, Trash2, Wand2, Image as ImageIcon, Video, AlignLeft, LayoutDashboard } from 'lucide-react'
+import { Plus, Trash2, Wand2, Image as ImageIcon, Video, AlignLeft, LayoutDashboard, Crop } from 'lucide-react'
 
 interface ProjectItem {
   id: string
@@ -52,8 +52,79 @@ export function getDriveThumbnailUrl(url: string | null | undefined): string | n
   return url;
 }
 
+// Helper to get direct video download link for Google Drive (allows proxy streaming)
+function getDirectDriveUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
+  }
+  return url;
+}
+
+function VideoScrubberModal({ videoLink, onClose, onCapture }: { videoLink: string, onClose: () => void, onCapture: (base64: string) => void }) {
+  const reactVideoRef = useRef<HTMLVideoElement>(null);
+  
+  const directUrl = getDirectDriveUrl(videoLink) || videoLink;
+  // Proxy URL to bypass CORS and allow canvas extraction
+  const proxyUrl = `/api/proxy-video?url=${encodeURIComponent(directUrl)}`;
+
+  const handleCapture = () => {
+    const video = reactVideoRef.current;
+    if (!video) return alert("Video not ready");
+
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      return alert("Video metadata not loaded yet. Please play the video for a second.");
+    }
+
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        onCapture(dataUrl);
+      }
+    } catch (error) {
+      console.error("Capture failed:", error);
+      alert("تعذر التقاط الصورة بسبب قيود الأمان في رابط الفيديو. يرجى التأكد من أن الرابط مباشر أو استخدام زر السحب التلقائي.");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+      <div className="w-[90%] max-w-2xl rounded-2xl border border-[var(--border)] bg-[#0d0f14] p-6 shadow-2xl">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-xl font-bold text-white">Capture Video Frame</h3>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-white">✕</button>
+        </div>
+        
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black mb-4">
+          <video 
+            ref={reactVideoRef}
+            src={proxyUrl} 
+            controls 
+            crossOrigin="anonymous" 
+            className="h-full w-full object-contain"
+          />
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <button onClick={onClose} className="admin-btn border border-[var(--border)] hover:bg-white/5">Cancel</button>
+          <button onClick={handleCapture} className="admin-btn admin-btn-primary flex items-center gap-2">
+            <Crop className="h-4 w-4" /> Capture & Use Frame
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AdminProjectCard({ project, update }: { project: ProjectItem, update: any }) {
   const [activeTab, setActiveTab] = useState<'basics' | 'details' | 'media'>('basics')
+  const [showScrubber, setShowScrubber] = useState(false)
 
   // Derive thumbnail for preview
   const rawPoster = project.thumbnailUrl || project.coverImage || undefined;
@@ -221,17 +292,35 @@ function AdminProjectCard({ project, update }: { project: ProjectItem, update: a
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Field label="Cover/Thumbnail Link (صورة الغلاف)">
               <div className="flex gap-2">
-                <input className="admin-input flex-1" placeholder="أو اتركها فارغة لسحبها من الفيديو" defaultValue={project.thumbnailUrl ?? project.coverImage ?? ''} onChange={(e) => update({ ...project, thumbnailUrl: e.target.value || null })} />
+                <input className="admin-input flex-1" placeholder="أو اتركها فارغة لسحبها من الفيديو" value={project.thumbnailUrl ?? project.coverImage ?? ''} onChange={(e) => update({ ...project, thumbnailUrl: e.target.value || null })} />
+                <button 
+                  onClick={() => setShowScrubber(true)}
+                  title="استخراج إطار من الفيديو يدوياً"
+                  className="flex items-center justify-center gap-2 rounded-lg bg-emerald-glow/10 border border-emerald-glow/30 px-3 text-sm text-emerald-glow hover:bg-emerald-glow/20 transition-colors whitespace-nowrap"
+                >
+                  <Crop className="h-4 w-4" /> استخراج إطار
+                </button>
                 <button 
                   onClick={extractThumbnail}
                   title="سحب الغلاف تلقائياً من فيديو جوجل درايف"
-                  className="flex items-center justify-center gap-2 rounded-lg bg-emerald-glow/10 border border-emerald-glow/30 px-3 text-sm text-emerald-glow hover:bg-emerald-glow/20 transition-colors whitespace-nowrap"
+                  className="flex items-center justify-center gap-2 rounded-lg bg-[var(--surface-strong)] border border-[var(--border)] px-3 text-sm text-[var(--text-secondary)] hover:text-white transition-colors whitespace-nowrap"
                 >
-                  <Wand2 className="h-4 w-4" /> سحب الغلاف
+                  <Wand2 className="h-4 w-4" /> Auto
                 </button>
               </div>
-              <p className="text-[10px] text-[var(--text-muted)] mt-1 ml-1">استخدم الزر لسحب صورة مصغرة عالية الجودة من رابط الفيديو مباشرة.</p>
+              <p className="text-[10px] text-[var(--text-muted)] mt-1 ml-1">استخدم الزر لفتح مشغل الفيديو واختيار الإطار المناسب كصورة غلاف.</p>
             </Field>
+
+            {showScrubber && (project.driveUrl || project.videoUrl) && (
+              <VideoScrubberModal 
+                videoLink={project.driveUrl || project.videoUrl || ''}
+                onClose={() => setShowScrubber(false)}
+                onCapture={(base64) => {
+                  update({ ...project, thumbnailUrl: base64 });
+                  setShowScrubber(false);
+                }}
+              />
+            )}
 
             <Field label="LONG-FORM VIDEO LINK (فيديو بالعرض 16:9)" hint="اختياري. يظهر داخل الصفحة الخاصة للمشروع.">
               <div className="relative">

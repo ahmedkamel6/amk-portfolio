@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/portfolio/auth'
-import bcrypt from 'bcryptjs'
+import { hashPassword, verifyPassword } from '@/lib/portfolio/password'
 
 export async function PUT(req: NextRequest) {
   const session = await getSession()
@@ -28,14 +28,14 @@ export async function PUT(req: NextRequest) {
   }
 
   if (currentPassword && newPassword) {
-    const valid = bcrypt.compareSync(currentPassword, user.passwordHash)
+    const valid = await verifyPassword(currentPassword, user.passwordHash)
     if (!valid) {
       return NextResponse.json({ error: 'Incorrect current password' }, { status: 400 })
     }
     if (newPassword.length < 8) {
       return NextResponse.json({ error: 'New password must be at least 8 characters' }, { status: 400 })
     }
-    dataToUpdate.passwordHash = bcrypt.hashSync(newPassword, 10)
+    dataToUpdate.passwordHash = await hashPassword(newPassword)
   }
 
   if (Object.keys(dataToUpdate).length === 0) {
