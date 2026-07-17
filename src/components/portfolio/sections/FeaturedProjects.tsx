@@ -37,9 +37,9 @@ export function FeaturedProjects({ projects, toolLogos, index = '03' }: { projec
             <InfiniteCarousel projects={featuredProjects} toolLogos={toolLogos} />
           </div>
         ) : (
-          <div className="mt-8 px-4 mx-auto max-w-[1400px] grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="mt-8 px-2 mx-auto max-w-[1400px] grid grid-cols-2 gap-3 sm:gap-6">
             {featuredProjects.slice(0, 4).map((p, i) => (
-              <div key={p.id} className="h-[450px]">
+              <div key={p.id} className="w-full">
                 <ProjectCard project={p} toolLogos={toolLogos} index={i} />
               </div>
             ))}
