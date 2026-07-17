@@ -21,12 +21,12 @@ export default function AdminContactPage() {
     update({ channels: [...contact.channels, newChannel] })
   }
 
-  const removeChannel = (id: string) => {
-    update({ channels: contact.channels.filter((c) => c.id !== id) })
+  const removeChannel = (index: number) => {
+    update({ channels: contact.channels.filter((_, i) => i !== index) })
   }
 
-  const updateChannel = (id: string, patch: Partial<typeof contact.channels[number]>) => {
-    update({ channels: contact.channels.map((c) => (c.id === id ? { ...c, ...patch } : c)) })
+  const updateChannel = (index: number, patch: Partial<typeof contact.channels[number]>) => {
+    update({ channels: contact.channels.map((c, i) => (i === index ? { ...c, ...patch } : c)) })
   }
 
   return (
@@ -79,26 +79,26 @@ export default function AdminContactPage() {
             <AdminCard key={ch.id || i}>
               <div className="mb-3 flex items-center justify-between">
                 <span className="font-medium text-[var(--text-primary)]">{ch.label}</span>
-                <button onClick={() => removeChannel(ch.id)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10">
+                <button onClick={() => removeChannel(i)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Label">
-                    <input className="admin-input" defaultValue={ch.label} onChange={(e) => updateChannel(ch.id, { label: e.target.value })} />
+                    <input className="admin-input" defaultValue={ch.label} onChange={(e) => updateChannel(i, { label: e.target.value })} />
                   </Field>
                   <Field label="Icon">
-                    <select className="admin-input" defaultValue={ch.iconName} onChange={(e) => updateChannel(ch.id, { iconName: e.target.value })}>
+                    <select className="admin-input" defaultValue={ch.iconName} onChange={(e) => updateChannel(i, { iconName: e.target.value })}>
                       {ICON_NAMES.map((name) => <option key={name} value={name}>{name}</option>)}
                     </select>
                   </Field>
                 </div>
                 <Field label="Handle / Display Text">
-                  <input className="admin-input" defaultValue={ch.handle} onChange={(e) => updateChannel(ch.id, { handle: e.target.value })} />
+                  <input className="admin-input" defaultValue={ch.handle} onChange={(e) => updateChannel(i, { handle: e.target.value })} />
                 </Field>
                 <Field label="Link (URL or mailto:)">
-                  <input className="admin-input" defaultValue={ch.href} onChange={(e) => updateChannel(ch.id, { href: e.target.value })} />
+                  <input className="admin-input" defaultValue={ch.href} onChange={(e) => updateChannel(i, { href: e.target.value })} />
                 </Field>
               </div>
             </AdminCard>

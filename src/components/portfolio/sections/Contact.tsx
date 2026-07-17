@@ -27,12 +27,17 @@ export function Contact({ contact, index = '09' }: { contact: ContactContent, in
           </MagneticButton>
         </motion.div>
         <motion.div className="mt-20 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.5 }}>
-          {contact.channels.map((ch, i) => (
+          {contact.channels.map((ch, i) => {
+            let processedHref = ch.href;
+            if (processedHref && !processedHref.startsWith('http') && !processedHref.startsWith('mailto:') && !processedHref.startsWith('tel:')) {
+              processedHref = `https://${processedHref}`;
+            }
+            return (
             <motion.a
               key={ch.id || i}
-              href={ch.href}
-              target={ch.href.startsWith('http') ? '_blank' : undefined}
-              rel={ch.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              href={processedHref}
+              target={processedHref.startsWith('http') ? '_blank' : undefined}
+              rel={processedHref.startsWith('http') ? 'noopener noreferrer' : undefined}
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.6 + i * 0.1 }}
@@ -50,7 +55,7 @@ export function Contact({ contact, index = '09' }: { contact: ContactContent, in
               </div>
               <div className="absolute bottom-0 left-0 h-px w-0 bg-gradient-to-r from-emerald-glow to-transparent transition-all duration-700 group-hover:w-full" />
             </motion.a>
-          ))}
+          )})}
         </motion.div>
         <motion.div className="mt-24 flex flex-col items-center gap-2 border-t border-[var(--border)] pt-12 text-center" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.6, delay: 1 }}>
           <p className="font-display text-2xl font-bold text-gradient-white">{contact.footerName}</p>
