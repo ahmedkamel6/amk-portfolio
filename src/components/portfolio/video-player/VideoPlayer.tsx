@@ -109,7 +109,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
   }, [])
 
   // Check if it's a Google Drive link to use the iframe fallback for Desktop
-  let driveId = null;
+  let driveId: string | null = null;
   if (originalSrc && (originalSrc.includes('drive.google.com') || originalSrc.includes('drive.usercontent.google.com'))) {
     const match = originalSrc.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || originalSrc.match(/id=([a-zA-Z0-9_-]+)/);
     if (match && match[1]) {
@@ -147,7 +147,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         preload="auto"
         playsInline
         loop={isLoop}
-        // fetchPriority tells the browser this is the most important resource
+        // @ts-expect-error fetchPriority is valid HTML but not in React types yet
         fetchPriority="high"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
