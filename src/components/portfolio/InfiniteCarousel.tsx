@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
-import AutoScroll from 'embla-carousel-auto-scroll'
 import type { Project } from '@/lib/portfolio/default-content'
 import { ProjectCard } from './ProjectCard'
 
@@ -15,10 +14,9 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
     multipliedProjects = [...multipliedProjects, ...projects];
   }
 
-  // Embla setup with AutoScroll plugin. Start in the middle to avoid left-side gap on load.
+  // Embla setup. Start in the middle. No auto-scroll plugins.
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, dragFree: true, startIndex: Math.floor(multipliedProjects.length / 2) },
-    [AutoScroll({ playOnInit: true, stopOnInteraction: false, stopOnMouseEnter: true, speed: 1.5 })]
+    { loop: true, dragFree: true, startIndex: Math.floor(multipliedProjects.length / 2) }
   )
 
   const onScroll = useCallback(() => {
@@ -48,11 +46,17 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
       const zIndex = Math.round(curvedValue * 10)
       const opacity = 0.2 + (curvedValue * 0.8)
 
-      const node = nodes[index]
+      const node = nodes[index] as HTMLElement
       if (node) {
         node.style.transform = `scale(${scale})`
         node.style.zIndex = zIndex.toString()
         node.style.opacity = opacity.toString()
+
+        // Center item glow effect
+        const glowElement = node.querySelector('.center-glow-border') as HTMLElement
+        if (glowElement) {
+          glowElement.style.opacity = tweenValue > 0.95 ? '1' : '0'
+        }
       }
     })
   }, [emblaApi])
@@ -120,7 +124,11 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
                   zIndex: 0,
                 }}
               >
-                <div className="p-3 w-full h-full">
+                <div className="p-3 w-full h-full relative">
+                  <div 
+                    className="center-glow-border absolute inset-2 rounded-[1.2rem] transition-opacity duration-300 pointer-events-none z-50 border-[3px] border-white shadow-[0_0_30px_10px_rgba(255,255,255,0.4)]"
+                    style={{ opacity: 0 }}
+                  />
                   <ProjectCard project={p} toolLogos={toolLogos} index={index} />
                 </div>
               </div>

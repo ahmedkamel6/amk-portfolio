@@ -20,13 +20,13 @@ export function getDirectDriveUrl(url: string | null | undefined, preview: boole
   return url;
 }
 
-// Helper specifically for Google Drive image thumbnails (high quality)
+// Helper specifically for Google Drive image thumbnails
 export function getDriveThumbnailUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
-    // Drive's internal thumbnail API, w1920-h1080 ensures max quality
-    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1920-h1080`;
+    // uc?export=view is highly reliable for images hosted on Drive
+    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
   }
   return url;
 }

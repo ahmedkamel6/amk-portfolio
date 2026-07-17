@@ -40,7 +40,6 @@ export interface VideoPlayerContextProps {
   isBuffering: boolean
   setIsBuffering: (val: boolean) => void
   finalSrc: string | null
-  isGoogleDrive: boolean
   originalSrc: string
   togglePlay: () => void
   toggleMute: () => void
@@ -81,8 +80,6 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
   const [isLoading, setIsLoading] = useState(true)
   const [isBuffering, setIsBuffering] = useState(false)
   const [finalSrc, setFinalSrc] = useState<string | null>(null)
-  
-  const isGoogleDrive = src ? src.includes('drive.google.com') : false;
 
   // Initialize HLS or Native
   useEffect(() => {
@@ -92,7 +89,12 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
     const initHls = () => {
       let finalSrc = src;
       if (src && src.includes('drive.google.com')) {
-        finalSrc = `/api/proxy-video?url=${encodeURIComponent(src)}`;
+        const match = src.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) {
+          // Pipe through proxy to bypass Drive virus warnings and CORS, returning direct MP4
+          const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
+          finalSrc = `/api/proxy-video?url=${encodeURIComponent(directUrl)}`;
+        }
       }
 
       if (Hls.isSupported() && finalSrc.includes('.m3u8')) {
@@ -238,7 +240,6 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
         isLoading, setIsLoading,
         isBuffering, setIsBuffering,
         finalSrc,
-        isGoogleDrive,
         originalSrc: src,
         togglePlay, toggleMute, toggleFullscreen, togglePiP, seek, seekRelative
       }}

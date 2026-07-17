@@ -33,7 +33,6 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
     isSettingsOpen,
     setIsMuted,
     isLoop,
-    isGoogleDrive,
     originalSrc
   } = useVideoPlayer()
 
@@ -114,17 +113,9 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
       onMouseLeave={handleMouseLeave}
       onClick={() => setControlsVisible(true)}
     >
-      {isGoogleDrive ? (
-        <iframe
-          src={originalSrc.replace('/view?usp=sharing', '/preview')}
-          className="absolute inset-0 w-full h-full border-0"
-          allow="autoplay; fullscreen"
-          title="Google Drive Video"
-        />
-      ) : (
-        <video
-          ref={videoRef}
-          className="w-full h-full object-cover"
+      <video
+        ref={videoRef}
+        className="w-full h-full object-cover"
         poster={poster}
         preload="metadata"
         playsInline
@@ -162,8 +153,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         }}
       >
         {finalSrc && <source src={finalSrc} type="video/mp4" />}
-        </video>
-      )}
+      </video>
 
       {/* Loading Skeleton / Shimmer */}
       <AnimatePresence>
@@ -183,7 +173,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         )}
       </AnimatePresence>
 
-      {!isGoogleDrive && <Controls />}
+      <Controls />
     </div>
   )
 }
