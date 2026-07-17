@@ -12,10 +12,8 @@ export function getDirectDriveUrl(url: string | null | undefined, preview: boole
   if (!url) return null;
   const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
-    // Pipe it through our proxy-video route to avoid browser CORS/X-Frame-Options blocking
-    // Adding confirm=t bypasses the large file virus scan warning
-    const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
-    return `/api/proxy-video?url=${encodeURIComponent(directUrl)}${preview ? '&quality=360p' : ''}`;
+    // Return direct drive download link for instant load without proxy buffering
+    return `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
   }
   return url;
 }
@@ -31,7 +29,7 @@ export function getDriveThumbnailUrl(url: string | null | undefined): string | n
   return url;
 }
 
-export function ProjectCard({ project, index, toolLogos }: { project: Project; index: number; toolLogos?: any[] }) {
+export function ProjectCard({ project, index, toolLogos, inCarousel = false }: { project: Project; index: number; toolLogos?: any[]; inCarousel?: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.2, margin: "0px 0px -50px 0px" })
@@ -62,9 +60,9 @@ export function ProjectCard({ project, index, toolLogos }: { project: Project; i
   return (
     <motion.article
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: isMobile ? (index % 2) * 0.05 : (index % 5) * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      initial={inCarousel ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      animate={inCarousel ? { opacity: 1, y: 0 } : (inView ? { opacity: 1, y: 0 } : {})}
+      transition={{ duration: 0.7, delay: inCarousel ? 0 : (isMobile ? (index % 2) * 0.05 : (index % 5) * 0.1), ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="group relative h-full w-full"
@@ -97,7 +95,6 @@ export function ProjectCard({ project, index, toolLogos }: { project: Project; i
                 loop
                 muted
                 playsInline
-                crossOrigin="anonymous"
                 className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
                 onCanPlay={(e) => {
                   e.currentTarget.style.opacity = '1';

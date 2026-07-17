@@ -69,8 +69,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
     emblaApi.on('reInit', onScroll)
 
     const handleWheel = (e: WheelEvent) => {
-      // Prevent default page scroll if scrolling horizontally, OR if we want vertical scroll to move carousel
-      // Only do this when hovering over the carousel
+      // Always prevent default to block parent page scroll while hovering over the carousel
       e.preventDefault();
       
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
@@ -82,7 +81,9 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
       }
     }
 
-    const node = emblaApi.rootNode()
+    // Attach to the entire container rather than just the embla root node
+    // to ensure the user doesn't accidentally scroll the page when their mouse is in the padding area
+    const node = emblaRef.current?.parentElement
     if (node) {
       node.addEventListener('wheel', handleWheel, { passive: false })
     }
@@ -129,7 +130,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
                     className="center-glow-border absolute inset-1.5 rounded-[1.2rem] transition-opacity duration-300 pointer-events-none z-50 border-[2px] border-[#6a7c9a] shadow-[0_0_30px_5px_rgba(106,124,154,0.3)]"
                     style={{ opacity: 0 }}
                   />
-                  <ProjectCard project={p} toolLogos={toolLogos} index={index} />
+                  <ProjectCard project={p} toolLogos={toolLogos} index={index} inCarousel={true} />
                 </div>
               </div>
             )
