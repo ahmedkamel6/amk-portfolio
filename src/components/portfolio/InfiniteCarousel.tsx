@@ -9,29 +9,26 @@ import { ProjectCard } from './ProjectCard'
 export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[], toolLogos?: any[] }) {
   if (!projects || projects.length === 0) return null;
 
-  // Multiply to ensure enough items for a flawless infinite marquee
-  let multipliedProjects: Project[] = [];
-  for (let i = 0; i < 20; i++) {
+  // Multiply to ensure enough items for a flawless infinite marquee without overloading the DOM
+  let multipliedProjects: Project[] = [...projects];
+  while (multipliedProjects.length < 40) {
     multipliedProjects = [...multipliedProjects, ...projects];
   }
 
   // Embla setup with AutoScroll plugin. Start in the middle to avoid left-side gap on load.
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, dragFree: true, startIndex: Math.floor(multipliedProjects.length / 2) },
-    [AutoScroll({ playOnInit: true, stopOnInteraction: false, stopOnMouseEnter: false, speed: 1.5 })]
+    [AutoScroll({ playOnInit: true, stopOnInteraction: false, stopOnMouseEnter: true, speed: 1.5 })]
   )
-
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [tweenValues, setTweenValues] = useState<number[]>([])
 
   const onScroll = useCallback(() => {
     if (!emblaApi) return
 
     const engine = emblaApi.internalEngine()
     const scrollProgress = emblaApi.scrollProgress()
+    const nodes = emblaApi.slideNodes()
 
-    const styles = emblaApi.scrollSnapList().map((scrollSnap, index) => {
+    emblaApi.scrollSnapList().forEach((scrollSnap, index) => {
       let diffToTarget = scrollSnap - scrollProgress
 
       if (engine.options.loop) {
@@ -45,12 +42,20 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
         })
       }
 
-      const tweenValue = 1 - Math.abs(diffToTarget * 2)
-      return Math.max(0, tweenValue)
-    })
+      const tweenValue = Math.max(0, 1 - Math.abs(diffToTarget * 2))
+      const curvedValue = Math.pow(tweenValue, 2)
+      const scale = 0.55 + (curvedValue * 0.50)
+      const zIndex = Math.round(curvedValue * 10)
+      const opacity = 0.2 + (curvedValue * 0.8)
 
-    setTweenValues(styles)
-  }, [emblaApi, setTweenValues])
+      const node = nodes[index]
+      if (node) {
+        node.style.transform = `scale(${scale})`
+        node.style.zIndex = zIndex.toString()
+        node.style.opacity = opacity.toString()
+      }
+    })
+  }, [emblaApi])
 
   useEffect(() => {
     if (!emblaApi) return
@@ -94,23 +99,15 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex touch-pan-y" style={{ backfaceVisibility: 'hidden' }}>
           {multipliedProjects.map((p, index) => {
-            const tweenValue = tweenValues.length ? tweenValues[index] : 1
-            // Center item is scale 1.05. Edge items drop sharply to 0.55 to give depth
-            const curvedValue = Math.pow(tweenValue, 2)
-            const scale = 0.55 + (curvedValue * 0.50)
-            const zIndex = Math.round(curvedValue * 10)
-            const opacity = 0.2 + (curvedValue * 0.8)
-            const rotateY = diffToRotation(tweenValue, index, emblaApi)
-
             return (
               <div
                 key={`${p.id}-${index}`}
-                className="w-[200px] sm:w-[240px] md:w-[280px] flex-shrink-0 flex-grow-0 min-w-0"
+                className="w-[200px] sm:w-[240px] md:w-[280px] flex-shrink-0 flex-grow-0 min-w-0 transition-none"
                 style={{
-                  transform: `scale(${scale})`,
-                  opacity,
-                  zIndex,
-                  transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
+                  // The initial styles will be overwritten instantly by onScroll on mount
+                  transform: `scale(0.55)`,
+                  opacity: 0.2,
+                  zIndex: 0,
                 }}
               >
                 <div className="p-3 w-full h-full">

@@ -7,10 +7,13 @@ import { ExternalLink } from 'lucide-react'
 import { SectionHeading } from '../SectionHeading'
 import type { Project } from '@/lib/portfolio/default-content'
 import { InfiniteCarousel } from '../InfiniteCarousel'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { ProjectCard } from '../ProjectCard'
 
 export function FeaturedProjects({ projects, toolLogos, index = '03' }: { projects: Project[], toolLogos?: any[], index?: string }) {
   // We want to show all featured projects in the carousel
   const featuredProjects = projects.filter(p => p.featured);
+  const isMobile = useIsMobile();
 
   return (
     <section id="projects" className="relative w-full overflow-hidden pt-28 pb-32 md:pt-32 md:pb-48">
@@ -28,10 +31,20 @@ export function FeaturedProjects({ projects, toolLogos, index = '03' }: { projec
           />
         </div>
         
-        {/* Infinite 3D Carousel instead of static grid */}
-        <div className="mt-12 w-full">
-          <InfiniteCarousel projects={featuredProjects} toolLogos={toolLogos} />
-        </div>
+        {/* Infinite 3D Carousel (Desktop Only) or Grid (Mobile Only) */}
+        {!isMobile ? (
+          <div className="mt-12 w-full">
+            <InfiniteCarousel projects={featuredProjects} toolLogos={toolLogos} />
+          </div>
+        ) : (
+          <div className="mt-8 px-4 mx-auto max-w-[1400px] grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {featuredProjects.slice(0, 4).map((p, i) => (
+              <div key={p.id} className="h-[450px]">
+                <ProjectCard project={p} toolLogos={toolLogos} index={i} />
+              </div>
+            ))}
+          </div>
+        )}
         
         <motion.div 
           className="mt-12 flex justify-center" 
