@@ -52,10 +52,10 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
         node.style.zIndex = zIndex.toString()
         node.style.opacity = opacity.toString()
 
-        // Center item glow effect
+        // Exact center item glow effect
         const glowElement = node.querySelector('.center-glow-border') as HTMLElement
         if (glowElement) {
-          glowElement.style.opacity = tweenValue > 0.95 ? '1' : '0'
+          glowElement.style.opacity = tweenValue > 0.99 ? '1' : '0'
         }
       }
     })
@@ -126,7 +126,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
               >
                 <div className="p-3 w-full h-full relative">
                   <div 
-                    className="center-glow-border absolute inset-2 rounded-[1.2rem] transition-opacity duration-300 pointer-events-none z-50 border-[3px] border-white shadow-[0_0_30px_10px_rgba(255,255,255,0.4)]"
+                    className="center-glow-border absolute inset-1.5 rounded-[1.2rem] transition-opacity duration-300 pointer-events-none z-50 border-[2px] border-[#6a7c9a] shadow-[0_0_30px_5px_rgba(106,124,154,0.3)]"
                     style={{ opacity: 0 }}
                   />
                   <ProjectCard project={p} toolLogos={toolLogos} index={index} />
