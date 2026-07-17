@@ -112,7 +112,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
                 className="w-[200px] sm:w-[240px] md:w-[280px] flex-shrink-0 flex-grow-0 min-w-0 transition-none"
                 onClickCapture={(e) => {
                   // Prevent click if the user was dragging the carousel
-                  if (emblaApi && !emblaApi.clickAllowed()) {
+                  if (emblaApi && !(emblaApi as any).clickAllowed()) {
                     e.preventDefault();
                     e.stopPropagation();
                   }
