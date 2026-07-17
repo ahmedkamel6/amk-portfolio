@@ -97,7 +97,7 @@ export default function Controls() {
   return (
     <div 
       {...bindGestures()}
-      className="absolute inset-0 z-10 touch-none flex flex-col justify-end overflow-hidden"
+      className="absolute inset-0 z-10 touch-pan-y flex flex-col justify-end overflow-hidden"
     >
       {/* Double Tap Ripple Animations */}
       <AnimatePresence>
