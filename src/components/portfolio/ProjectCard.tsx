@@ -81,7 +81,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
           </div>
 
           {/* Hover Video Preview */}
-          {hovered && directVideoUrl && (
+          {hovered && !isMobile && directVideoUrl && (
             <div className="absolute inset-0 h-full w-full overflow-hidden z-0 pointer-events-none">
               {directVideoUrl.includes('google.com') && (directVideoUrl.match(/id=([a-zA-Z0-9_-]+)/) || directVideoUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)) ? (
                 <iframe

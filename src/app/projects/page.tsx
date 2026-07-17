@@ -19,8 +19,12 @@ export default async function ProjectsPage() {
   return (
     <SmoothScroll>
       <AmbientBackground theme={content.theme} />
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-radial-spotlight" />
+        <div className="absolute inset-0 bg-noise opacity-30" />
+      </div>
       <Navigation theme={content.theme} />
-      <main className="min-h-screen pt-32 pb-24 relative">
+      <main className="min-h-screen pt-32 pb-24 relative z-10">
         <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6">
           <SectionHeading 
             index="ARCHIVE" 
