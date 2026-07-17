@@ -3,7 +3,7 @@ import { Geist, Geist_Mono, Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeApplier } from "@/components/portfolio/ThemeApplier";
-import { ThemeProvider } from "@/components/portfolio/ThemeProvider";
+import { PerformanceProvider } from "@/components/portfolio/PerformanceProvider";
 import { getAppearance } from "@/lib/portfolio/db";
 
 const geistSans = Geist({
@@ -122,8 +122,10 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground theme-transition`}
       >
         <ThemeApplier theme={theme} />
-        {children}
-        <Toaster />
+        <PerformanceProvider>
+          {children}
+          <Toaster />
+        </PerformanceProvider>
         {/* JSON-LD structured data */}
         <script
           type="application/ld+json"

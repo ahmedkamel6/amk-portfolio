@@ -70,7 +70,7 @@ export function InfiniteCarousel({ projects, toolLogos }: { projects: Project[],
       }
     }
 
-    const node = emblaRef.current
+    const node = emblaApi.rootNode()
     if (node) {
       node.addEventListener('wheel', handleWheel, { passive: true })
     }
