@@ -391,9 +391,9 @@ export const defaultContent: SiteContent = {
     description:
       'Have a project in mind, a brief in hand, or just want to talk craft? I read every message and reply within 24 hours.',
     ctaLabel: 'Start a Conversation',
-    ctaHref: 'mailto:hello@ahmedmkamel.com',
+    ctaHref: 'mailto:ahmedmohamedkamelrateb@gmail.com',
     channels: [
-      { id: 'c1', iconName: 'Mail', label: 'Email', handle: 'hello@ahmedmkamel.com', href: 'mailto:hello@ahmedmkamel.com' },
+      { id: 'c1', iconName: 'Mail', label: 'Email', handle: 'ahmedmohamedkamelrateb@gmail.com', href: 'mailto:ahmedmohamedkamelrateb@gmail.com' },
       { id: 'c2', iconName: 'Linkedin', label: 'LinkedIn', handle: 'in/ahmedmkamel', href: 'https://www.linkedin.com/in/ahmedmkamel' },
       { id: 'c3', iconName: 'Instagram', label: 'Instagram', handle: '@ahmedmkamel.creative', href: 'https://www.instagram.com/ahmedmkamel.creative' },
       { id: 'c4', iconName: 'MessageCircle', label: 'WhatsApp', handle: '+20 100 000 0000', href: 'https://wa.me/201000000000' },
@@ -410,5 +410,9 @@ export const defaultContent: SiteContent = {
     particleCount: 600,
     gridOpacity: 0.15,
     glowIntensity: 1,
+    orderAbout: 1,
+    orderProjects: 2,
+    orderSkills: 3,
+    orderContact: 4,
   },
 }

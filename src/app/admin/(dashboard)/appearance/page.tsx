@@ -166,13 +166,13 @@ export default function AdminAppearancePage() {
         <p className="mb-4 text-xs text-[var(--text-muted)]">Set the order for the 4 main navigation links. Lower numbers appear first.</p>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <Field label="Work (Projects) Order">
-            <input type="number" className="admin-input" defaultValue={theme.orderProjects ?? 1} onChange={(e) => update({ orderProjects: parseInt(e.target.value) || 1 })} />
+            <input type="number" className="admin-input" defaultValue={theme.orderProjects ?? 2} onChange={(e) => update({ orderProjects: parseInt(e.target.value) || 2 })} />
           </Field>
           <Field label="Skills Order">
-            <input type="number" className="admin-input" defaultValue={theme.orderSkills ?? 2} onChange={(e) => update({ orderSkills: parseInt(e.target.value) || 2 })} />
+            <input type="number" className="admin-input" defaultValue={theme.orderSkills ?? 3} onChange={(e) => update({ orderSkills: parseInt(e.target.value) || 3 })} />
           </Field>
           <Field label="About Order">
-            <input type="number" className="admin-input" defaultValue={theme.orderAbout ?? 3} onChange={(e) => update({ orderAbout: parseInt(e.target.value) || 3 })} />
+            <input type="number" className="admin-input" defaultValue={theme.orderAbout ?? 1} onChange={(e) => update({ orderAbout: parseInt(e.target.value) || 1 })} />
           </Field>
           <Field label="Contact Order">
             <input type="number" className="admin-input" defaultValue={theme.orderContact ?? 4} onChange={(e) => update({ orderContact: parseInt(e.target.value) || 4 })} />

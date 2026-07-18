@@ -55,9 +55,14 @@ export function AdminSidebarClient() {
   const [mode, setMode] = useState<'dark' | 'light'>('dark')
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  const [settings, setSettings] = useState<any>(null)
+
   // Fetch current theme from API
   useEffect(() => {
-    fetch('/api/appearance').then((r) => r.json()).then((d) => setMode(d.mode)).catch(() => {})
+    fetch('/api/appearance').then((r) => r.json()).then((d) => {
+      setMode(d.mode)
+      setSettings(d)
+    }).catch(() => {})
   }, [])
 
 
@@ -82,6 +87,18 @@ export function AdminSidebarClient() {
             </div>
             <div className="space-y-0.5">
               {group.items.map((item) => {
+                if (settings) {
+                  if (item.label === 'Showreel' && settings.showShowreel === false) return null;
+                  if (item.label === 'Services' && settings.showServices === false) return null;
+                  if (item.label === 'Projects' && settings.showProjects === false) return null;
+                  if (item.label === 'Before / After' && settings.showBeforeAfter === false) return null;
+                  if (item.label === 'Workflow' && settings.showWorkflow === false) return null;
+                  if (item.label === 'Skills' && settings.showSkills === false) return null;
+                  if (item.label === 'About' && settings.showAbout === false) return null;
+                  if (item.label === 'Testimonials' && settings.showTestimonials === false) return null;
+                  if (item.label === 'Contact' && settings.showContact === false) return null;
+                }
+
                 const active = pathname === item.href
                 return (
                   <Link

@@ -117,9 +117,9 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
     }
   }
 
-  // Use Google Drive iframe strictly on Desktop to avoid buffering. 
-  // Keep custom player on Mobile where it works well.
-  const useIframeFallback = driveId && !isMobile;
+  // We disable iframe fallback entirely because the user wants native 1080p and autoplay
+  // to work reliably (the iframe often defaults to 360p/720p).
+  const useIframeFallback = false;
 
   return (
     <div 

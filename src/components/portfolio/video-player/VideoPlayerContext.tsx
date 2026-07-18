@@ -66,7 +66,7 @@ function resolveDriveUrl(src: string): string {
   const match = src.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || src.match(/id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const directUrl = `https://drive.google.com/uc?export=download&id=${match[1]}&confirm=t`;
-    return `/api/stream?url=${encodeURIComponent(directUrl)}`;
+    return `/api/proxy-video?url=${encodeURIComponent(directUrl)}`;
   }
   return src;
 }
@@ -85,7 +85,7 @@ export const VideoPlayerProvider = ({ children, src }: { children: React.ReactNo
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isPiP, setIsPiP] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1)
-  const [quality, setQuality] = useState<VideoQuality>('auto')
+  const [quality, setQuality] = useState<VideoQuality>('1080p')
   const [availableQualities, setAvailableQualities] = useState<VideoQuality[]>(['auto'])
   const [isHls, setIsHls] = useState(false)
   const [isControlsVisible, setControlsVisible] = useState(true)
