@@ -15,13 +15,13 @@ interface VideoPlayerProps {
 }
 
 const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay }: VideoPlayerProps) => {
-  const { 
-    videoRef, 
+  const {
+    videoRef,
     containerRef,
-    setIsPlaying, 
-    setCurrentTime, 
-    setDuration, 
-    setBuffered, 
+    setIsPlaying,
+    setCurrentTime,
+    setDuration,
+    setBuffered,
     isLoading,
     setIsLoading,
     isBuffering,
@@ -45,7 +45,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return
-      
+
       const container = containerRef.current
       if (container && container.matches(':hover')) {
         switch (e.key) {
@@ -133,7 +133,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
   const useIframeFallback = !!driveId;
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={`relative w-full ${aspectRatio === '9/16' ? 'aspect-[9/16] max-w-[430px]' : 'aspect-video'} mx-auto rounded-3xl overflow-hidden bg-black shadow-2xl group ring-1 ring-white/10 ${className || ''}`}
       onMouseMove={handleMouseMove}
@@ -162,49 +162,49 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         />
       ) : (
         <video
-        ref={videoRef}
-        className="w-full h-full object-cover"
-        poster={poster}
-        preload="auto"
-        playsInline
-        loop={isLoop}
-        // @ts-expect-error fetchPriority is valid HTML but not in React types yet
-        fetchPriority="high"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onTimeUpdate={() => {
-          if (videoRef.current) {
-            setCurrentTime(videoRef.current.currentTime)
-          }
-        }}
-        onDurationChange={() => {
-          if (videoRef.current) {
-            setDuration(videoRef.current.duration)
-          }
-        }}
-        onProgress={() => {
-          if (videoRef.current) {
-            setBuffered(videoRef.current.buffered)
-          }
-        }}
-        onWaiting={() => setIsBuffering(true)}
-        onPlaying={() => {
-          setIsBuffering(false)
-          setIsLoading(false)
-        }}
-        onCanPlay={(e) => {
-          setIsLoading(false)
-          if (autoPlay && !hasAutoPlayed.current && videoRef.current) {
-            hasAutoPlayed.current = true
-            videoRef.current.muted = true
-            setIsMuted(true)
-            videoRef.current.play().catch((e) => {
-              if (e.name !== 'AbortError') console.error(e)
-            })
-          }
-        }}
-        src={finalSrc || undefined}
-      />
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          poster={poster}
+          preload="auto"
+          playsInline
+          loop={isLoop}
+          // @ts-expect-error fetchPriority is valid HTML but not in React types yet
+          fetchPriority="high"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onTimeUpdate={() => {
+            if (videoRef.current) {
+              setCurrentTime(videoRef.current.currentTime)
+            }
+          }}
+          onDurationChange={() => {
+            if (videoRef.current) {
+              setDuration(videoRef.current.duration)
+            }
+          }}
+          onProgress={() => {
+            if (videoRef.current) {
+              setBuffered(videoRef.current.buffered)
+            }
+          }}
+          onWaiting={() => setIsBuffering(true)}
+          onPlaying={() => {
+            setIsBuffering(false)
+            setIsLoading(false)
+          }}
+          onCanPlay={(e) => {
+            setIsLoading(false)
+            if (autoPlay && !hasAutoPlayed.current && videoRef.current) {
+              hasAutoPlayed.current = true
+              videoRef.current.muted = true
+              setIsMuted(true)
+              videoRef.current.play().catch((e) => {
+                if (e.name !== 'AbortError') console.error(e)
+              })
+            }
+          }}
+          src={finalSrc || undefined}
+        />
       )}
 
       {/* Loading Skeleton / Shimmer */}
