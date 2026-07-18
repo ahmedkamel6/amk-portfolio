@@ -128,9 +128,9 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
   youtubeId = getYouTubeId(originalSrc);
   if (!youtubeId && finalSrc) youtubeId = getYouTubeId(finalSrc);
 
-  // We disable iframe fallback entirely because the user wants native 1080p and autoplay
-  // to work reliably (the iframe often defaults to 360p/720p).
-  const useIframeFallback = false;
+  // Use Google Drive iframe to bypass Vercel bandwidth limits entirely.
+  // This uses the native Google Drive player interface.
+  const useIframeFallback = !!driveId;
 
   return (
     <div 
