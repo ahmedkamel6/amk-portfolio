@@ -22,7 +22,7 @@ export function getDirectDriveUrl(url: string | null | undefined, preview: boole
 export function getDriveThumbnailUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   // YouTube check
-  const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/);
   if (ytMatch && ytMatch[2].length === 11) {
     return `https://img.youtube.com/vi/${ytMatch[2]}/maxresdefault.jpg`;
   }
@@ -59,7 +59,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
   }
 
 
-  const isYouTube = directVideoUrl?.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  const isYouTube = directVideoUrl?.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/);
 
   return (
     <motion.article

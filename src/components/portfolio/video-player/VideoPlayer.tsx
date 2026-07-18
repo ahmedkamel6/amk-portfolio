@@ -121,7 +121,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
   let youtubeId: string | null = null;
   const getYouTubeId = (url: string | null | undefined) => {
     if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   }

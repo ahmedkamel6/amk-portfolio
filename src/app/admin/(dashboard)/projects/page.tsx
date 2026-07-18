@@ -46,7 +46,7 @@ const COMMON_TOOLS = [
 export function getDriveThumbnailUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   // YouTube check
-  const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/);
   if (ytMatch && ytMatch[2].length === 11) {
     return `https://img.youtube.com/vi/${ytMatch[2]}/maxresdefault.jpg`;
   }
