@@ -1,75 +1,82 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
 
+/**
+ * Lightweight loading screen — shows the original logo immediately
+ * with a subtle fade-in + scale, then fades out to reveal the Hero.
+ *
+ * Zero Framer Motion. Pure CSS animations.
+ */
 export function LoadingScreen() {
   const [done, setDone] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDone(true)
-    }, 2800)
-
+    const timer = setTimeout(() => setDone(true), 2400)
     return () => clearTimeout(timer)
   }, [])
 
+  if (done) return null
+
   return (
-    <AnimatePresence>
-      {!done && (
-        <motion.div
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-[#050505] bg-noise"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.8, ease: 'easeInOut' } }}
-        >
-          {/* SVG Filter to match the Header Logo Color EXACTLY */}
-          <svg width="0" height="0" className="absolute">
-            <filter id="iceBlueColorize">
-              <feColorMatrix
-                type="matrix"
-                values="0 0 0 0 0.415
-                        0 0 0 0 0.486
-                        0 0 0 0 0.603
-                        0 0 0 1 0"
-              />
-            </filter>
-          </svg>
+    <div className="ls-root" aria-hidden="true">
+      {/* Ambient background */}
+      <div className="pointer-events-none absolute inset-0 bg-radial-spotlight opacity-20" />
+      <div className="pointer-events-none absolute inset-0 bg-noise opacity-30" />
 
-          {/* Ambient glow */}
-          <div className="pointer-events-none absolute inset-0 bg-radial-spotlight opacity-20" />
-          <div className="pointer-events-none absolute inset-0 bg-grid opacity-10" />
+      {/* Logo container */}
+      <div className="ls-container">
+        {/* Subtle glow behind logo */}
+        <div className="ls-glow" />
 
-          {/* Logo Container */}
-          <motion.div 
-            className="relative flex items-center justify-center w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1.05 }}
-            transition={{ 
-              opacity: { duration: 0.5, ease: 'easeOut' }, // Fast fade in to prevent black screen
-              scale: { duration: 2.5, ease: 'easeOut' }    // Slow cinematic zoom
-            }}
-          >
-            {/* Glowing Backdrop for Premium Feel (Hardware Accelerated) */}
-            <motion.div
-              className="absolute inset-0 rounded-full bg-[#6A7C9A] blur-3xl opacity-0"
-              animate={{ opacity: [0, 0.15, 0.05] }}
-              transition={{ duration: 2.2, ease: 'easeInOut', times: [0, 0.5, 1] }}
-            />
+        {/* Original logo — appears immediately with fade-in */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.png"
+          alt=""
+          className="ls-logo"
+        />
+      </div>
 
-            {/* Exact Header Logo */}
-            <Image 
-              src="/logo.png" 
-              alt="Logo" 
-              fill 
-              style={{ filter: 'url(#iceBlueColorize)' }}
-              className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-              priority
-            />
-            
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      <style>{`
+        .ls-root {
+          position: fixed; inset: 0; z-index: 10000;
+          display: flex; align-items: center; justify-content: center;
+          background: #050505;
+          animation: ls-fadeout 0.8s ease-in-out 2.0s forwards;
+        }
+        .ls-container {
+          position: relative;
+          width: clamp(160px, 35vw, 280px);
+          height: clamp(160px, 35vw, 280px);
+          animation: ls-enter 0.6s ease-out forwards;
+        }
+        .ls-glow {
+          position: absolute; inset: -30%; border-radius: 50%;
+          background: radial-gradient(circle, rgba(106,124,154,0.15), transparent 70%);
+          animation: ls-glow-in 1.5s ease-in-out 0.3s forwards;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .ls-logo {
+          position: absolute; inset: 0; width: 100%; height: 100%;
+          object-fit: contain;
+          filter: brightness(0) saturate(100%) invert(52%) sepia(11%) saturate(871%) hue-rotate(170deg) brightness(91%) contrast(87%);
+          drop-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+
+        @keyframes ls-enter {
+          from { opacity: 0; transform: scale(0.92) }
+          to   { opacity: 1; transform: scale(1) }
+        }
+        @keyframes ls-glow-in {
+          from { opacity: 0 }
+          to   { opacity: 1 }
+        }
+        @keyframes ls-fadeout {
+          to { opacity: 0; pointer-events: none }
+        }
+      `}</style>
+    </div>
   )
 }
