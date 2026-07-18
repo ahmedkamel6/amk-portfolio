@@ -117,6 +117,17 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
     }
   }
 
+  // Check if it's a YouTube link
+  let youtubeId: string | null = null;
+  const getYouTubeId = (url: string | null | undefined) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
+  youtubeId = getYouTubeId(originalSrc);
+  if (!youtubeId && finalSrc) youtubeId = getYouTubeId(finalSrc);
+
   // We disable iframe fallback entirely because the user wants native 1080p and autoplay
   // to work reliably (the iframe often defaults to 360p/720p).
   const useIframeFallback = false;
@@ -129,7 +140,17 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
       onMouseLeave={handleMouseLeave}
       onClick={() => setControlsVisible(true)}
     >
-      {useIframeFallback ? (
+      {youtubeId ? (
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}?autoplay=${autoPlay ? 1 : 0}&mute=${autoPlay ? 1 : 0}&loop=${isLoop ? 1 : 0}&playlist=${youtubeId}&controls=1&rel=0&modestbranding=1`}
+          className="w-full h-full border-0 absolute inset-0 z-10"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          onLoad={() => {
+            setIsLoading(false);
+            setIsBuffering(false);
+          }}
+        />
+      ) : useIframeFallback ? (
         <iframe
           src={`https://drive.google.com/file/d/${driveId}/preview?autoplay=${autoPlay ? 1 : 0}`}
           className="w-full h-full border-0 absolute inset-0 z-10"
@@ -189,7 +210,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
       {/* Loading Skeleton / Shimmer */}
       <AnimatePresence>
         {/* Loading Spinner for Buffering */}
-        {isBuffering && !isLoading && !useIframeFallback && (
+        {isBuffering && !isLoading && !useIframeFallback && !youtubeId && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -204,7 +225,7 @@ const VideoElement = ({ src, poster, aspectRatio = 'video', className, autoPlay 
         )}
       </AnimatePresence>
 
-      {!useIframeFallback && <Controls />}
+      {!useIframeFallback && !youtubeId && <Controls />}
     </div>
   )
 }

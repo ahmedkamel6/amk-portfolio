@@ -18,9 +18,15 @@ export function getDirectDriveUrl(url: string | null | undefined, preview: boole
   return url;
 }
 
-// Helper specifically for Google Drive image thumbnails
+// Helper specifically for Google Drive image thumbnails or YouTube thumbnails
 export function getDriveThumbnailUrl(url: string | null | undefined): string | null {
   if (!url) return null;
+  // YouTube check
+  const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  if (ytMatch && ytMatch[2].length === 11) {
+    return `https://img.youtube.com/vi/${ytMatch[2]}/maxresdefault.jpg`;
+  }
+  // Drive check
   const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     // uc?export=view is highly reliable for images hosted on Drive
@@ -53,6 +59,8 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
   }
 
 
+  const isYouTube = directVideoUrl?.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+
   return (
     <motion.article
       ref={ref}
@@ -76,7 +84,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
           </div>
 
           {/* Hover Video Preview */}
-          {hovered && !isMobile && directVideoUrl && (
+          {hovered && !isMobile && directVideoUrl && !isYouTube && (
             <div className="absolute inset-0 h-full w-full overflow-hidden z-0 pointer-events-none bg-black/20">
               <video
                 ref={videoRef}

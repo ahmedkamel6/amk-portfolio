@@ -42,9 +42,15 @@ const COMMON_TOOLS = [
   'CapCut'
 ]
 
-// Helper specifically for Google Drive image thumbnails (high quality)
+// Helper specifically for Google Drive image thumbnails (high quality) or YouTube
 export function getDriveThumbnailUrl(url: string | null | undefined): string | null {
   if (!url) return null;
+  // YouTube check
+  const ytMatch = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+  if (ytMatch && ytMatch[2].length === 11) {
+    return `https://img.youtube.com/vi/${ytMatch[2]}/maxresdefault.jpg`;
+  }
+  // Drive check
   const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1920-h1080`;
@@ -137,7 +143,7 @@ function AdminProjectCard({ project, update }: { project: ProjectItem, update: a
     if (thumbUrl && thumbUrl !== videoLink) {
        update({ ...project, thumbnailUrl: thumbUrl });
     } else {
-       alert('Could not extract a Google Drive thumbnail from the provided link.');
+       alert('Could not extract a thumbnail automatically from the provided link.');
     }
   }
 
@@ -217,7 +223,7 @@ function AdminProjectCard({ project, update }: { project: ProjectItem, update: a
             <Field label="Category (القسم)" hint="مثال: Commercial, Color Grading">
               <input className="admin-input" defaultValue={project.category} onChange={(e) => update({ ...project, category: e.target.value })} />
             </Field>
-            <Field label="REEL VIDEO LINK (لينك فيديو بالطول 9:16)" hint="لينك جوجل درايف. ضروري للرئيسية">
+            <Field label="REEL VIDEO LINK (لينك فيديو بالطول 9:16)" hint="لينك يوتيوب أو جوجل درايف. ضروري للرئيسية">
               <div className="relative">
                 <Video className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input className="admin-input pl-9" defaultValue={project.driveUrl ?? ''} onChange={(e) => update({ ...project, driveUrl: e.target.value || null })} />
@@ -322,7 +328,7 @@ function AdminProjectCard({ project, update }: { project: ProjectItem, update: a
               />
             )}
 
-            <Field label="LONG-FORM VIDEO LINK (فيديو بالعرض 16:9)" hint="اختياري. يظهر داخل الصفحة الخاصة للمشروع.">
+            <Field label="LONG-FORM VIDEO LINK (فيديو بالعرض 16:9)" hint="لينك يوتيوب أو جوجل درايف اختياري. يظهر داخل الصفحة الخاصة للمشروع.">
               <div className="relative">
                 <Video className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input className="admin-input pl-9" defaultValue={project.videoUrl ?? ''} onChange={(e) => update({ ...project, videoUrl: e.target.value || null })} />
