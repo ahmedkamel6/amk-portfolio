@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeApplier } from "@/components/portfolio/ThemeApplier";
 import { PerformanceProvider } from "@/components/portfolio/PerformanceProvider";
 import { getAppearance } from "@/lib/portfolio/db";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -126,6 +127,7 @@ export default async function RootLayout({
           {children}
           <Toaster />
         </PerformanceProvider>
+        <Analytics />
         {/* JSON-LD structured data */}
         <script
           type="application/ld+json"
