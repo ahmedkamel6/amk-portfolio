@@ -630,3 +630,11 @@ input[type="range"]::-moz-range-thumb {
   border: none;
   box-shadow: 0 0 8px color-mix(in srgb, var(--emerald-glow) 50%, transparent);
 }
+
+/* Force hide native video controls injected by mobile browsers */
+video::-webkit-media-controls {
+  display: none !important;
+}
+video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
