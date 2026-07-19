@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeApplier } from "@/components/portfolio/ThemeApplier";
 import { PerformanceProvider } from "@/components/portfolio/PerformanceProvider";
 import { getAppearance } from "@/lib/portfolio/db";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -144,6 +145,17 @@ export default async function RootLayout({
             }),
           }}
         />
+        
+        {/* Google Analytics */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-R85C6ZG3EW" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-R85C6ZG3EW');
+          `}
+        </Script>
       </body>
     </html>
   );
