@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { m as motion, useScroll, useTransform } from 'framer-motion'
 import { useMemo } from 'react'
 import type { ThemeSettings } from '@/lib/portfolio/default-content'
 import { useIsMobile } from '@/hooks/use-mobile'

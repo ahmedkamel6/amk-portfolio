@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { Settings, ChevronLeft, Check, Repeat, PictureInPicture } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m as motion, AnimatePresence } from 'framer-motion'
 import { useVideoPlayer, VideoQuality } from './VideoPlayerContext'
 
 type MenuPage = 'main' | 'speed' | 'quality'

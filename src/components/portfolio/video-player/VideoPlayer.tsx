@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useCallback } from 'react'
 import { VideoPlayerProvider, useVideoPlayer } from './VideoPlayerContext'
 import Controls from './Controls'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m as motion, AnimatePresence } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-mobile'
 

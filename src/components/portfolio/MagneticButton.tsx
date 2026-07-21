@@ -6,7 +6,7 @@ import {
   type ButtonHTMLAttributes,
   type ReactNode,
 } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { m as motion, useMotionValue, useSpring } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 type Variant = 'primary' | 'ghost' | 'outline'

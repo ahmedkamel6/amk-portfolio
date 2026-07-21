@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { m as motion } from 'framer-motion'
 import { ArrowLeft, ArrowUpRight, Clock, Calendar, User, Wrench, Play, Mail } from 'lucide-react'
 import type { ProjectDetail } from '@/lib/portfolio/db'
 import { getDirectDriveUrl, getDriveThumbnailUrl } from './ProjectCard'

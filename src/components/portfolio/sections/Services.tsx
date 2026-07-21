@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m as motion, useInView } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { SectionHeading } from '../SectionHeading'
 import { TiltCard } from '../TiltCard'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m as motion, useInView } from 'framer-motion'
 import { MoveHorizontal } from 'lucide-react'
 import { SectionHeading } from '../SectionHeading'
 import type { BeforeAfterContent } from '@/lib/portfolio/default-content'

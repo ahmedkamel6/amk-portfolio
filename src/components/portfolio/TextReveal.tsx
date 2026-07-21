@@ -1,7 +1,7 @@
 'use client'
 
 import { type ReactNode } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m as motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 
 interface TextRevealProps {
@@ -10,6 +10,7 @@ interface TextRevealProps {
   delay?: number
   as?: 'h1' | 'h2' | 'h3' | 'p' | 'span'
   stagger?: number
+  ssrVisible?: boolean
 }
 
 /**
@@ -21,6 +22,7 @@ export function TextReveal({
   delay = 0,
   as: Tag = 'p',
   stagger = 0.08,
+  ssrVisible = false,
 }: TextRevealProps) {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.4 })
@@ -44,8 +46,8 @@ export function TextReveal({
         >
           <motion.span
             style={{ display: 'inline-block' }}
-            initial={{ y: '110%' }}
-            animate={inView ? { y: 0 } : {}}
+            initial={ssrVisible ? false : { y: '110%' }}
+            animate={inView ? { y: 0 } : (ssrVisible ? { y: 0 } : {})}
             transition={{
               duration: 0.9,
               delay: delay + i * stagger,

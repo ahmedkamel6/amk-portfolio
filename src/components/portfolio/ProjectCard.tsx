@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m as motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Play } from 'lucide-react'
@@ -90,6 +90,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
               <video
                 ref={videoRef}
                 src={directVideoUrl}
+                preload="none"
                 autoPlay
                 loop
                 muted

@@ -27,7 +27,9 @@ const nextConfig: NextConfig = {
   },
 
   // ─── Bundle Optimization ───
+  reactCompiler: true,
   experimental: {
+    cssChunking: 'strict',
     optimizePackageImports: [
       'lucide-react',
       'framer-motion',

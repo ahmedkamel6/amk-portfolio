@@ -1,7 +1,7 @@
 "use client"
 import React, { useRef, useState } from 'react'
 import { Play, Pause, Maximize, Minimize } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { m as motion, AnimatePresence } from 'framer-motion'
 import { useGesture } from '@use-gesture/react'
 import { useVideoPlayer } from './VideoPlayerContext'
 import ProgressBar from './ProgressBar'

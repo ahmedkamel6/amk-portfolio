@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m as motion, useInView } from 'framer-motion'
 import { SectionHeading } from '../SectionHeading'
 import type { AboutContent } from '@/lib/portfolio/default-content'
 import { Play } from 'lucide-react'

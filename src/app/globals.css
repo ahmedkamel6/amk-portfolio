@@ -287,6 +287,12 @@
   background-size: 64px 64px;
 }
 
+/* Performance: Skip rendering offscreen elements */
+.contain-paint {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1000px;
+}
+
 /* Radial spotlight */
 .bg-radial-spotlight {
   background: radial-gradient(

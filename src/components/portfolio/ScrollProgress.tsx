@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { m as motion, useScroll, useSpring } from 'framer-motion'
 
 /**
  * Slim emerald scroll progress bar at top of viewport.

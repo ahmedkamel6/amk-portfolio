@@ -1,8 +1,7 @@
 'use client'
 
-import { memo, Suspense } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { memo, Suspense, useEffect, useState, useRef } from 'react'
+import { m as motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown, Sparkles } from 'lucide-react'
 import { MagneticButton } from '../MagneticButton'
 import { TextReveal } from '../TextReveal'
@@ -23,6 +22,20 @@ const SCROLL_CUE_ANIM = { y: ['-50%', '150%'] }
 export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSettings, 'background' | 'accent' | 'accentSoft' | 'particleCount' | 'mode'> }) {
   const ref = useRef<HTMLElement>(null)
   const isMobile = useIsMobile()
+  const [loadParticles, setLoadParticles] = useState(false)
+
+  useEffect(() => {
+    if (isMobile) return // Never load particles on mobile
+    
+    // Defer heavy Three.js init until browser is completely idle
+    const initParticles = () => setLoadParticles(true)
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(initParticles, { timeout: 2000 })
+    } else {
+      setTimeout(initParticles, 1500)
+    }
+  }, [isMobile])
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
@@ -44,7 +57,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
     >
       {/* Background layers */}
       <div className="absolute inset-0 z-0">
-        {!isMobile && (
+        {loadParticles && (
           <Suspense fallback={null}>
             <ParticleBackground
               particleCount={theme.particleCount}
@@ -150,12 +163,12 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
 
         {/* Headline — name with shimmer overlay */}
         <h1 className="relative font-display text-5xl font-bold leading-[0.9] tracking-tight text-[var(--text-primary)] sm:text-7xl md:text-8xl lg:text-[9rem]">
-          <TextReveal as="span" delay={0.6} className="block">
+          <TextReveal as="span" delay={0.6} className="block" ssrVisible>
             {hero.name}
           </TextReveal>
           {/* Highlight line with glow + shimmer */}
           <span className="relative block">
-            <TextReveal as="span" delay={1.0} className="text-gradient-emerald text-glow block">
+            <TextReveal as="span" delay={1.0} className="text-gradient-emerald text-glow block" ssrVisible>
               {hero.nameHighlight}
             </TextReveal>
             {/* Shimmer sweep */}

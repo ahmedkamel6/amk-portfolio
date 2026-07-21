@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/portfolio/sections/Navigation'
 import { Hero } from '@/components/portfolio/sections/Hero'
 import type { SiteContent, Project } from '@/lib/portfolio/default-content'
+import { LazyMotion, domAnimation } from 'framer-motion'
 
 // ─── Lazy-loaded wrappers (below the fold) ───
 // These are dynamically imported with ssr:false so they don't bloat the initial JS bundle.
@@ -103,7 +104,8 @@ export function HomeContent({ content, featuredProjects }: HomeContentProps) {
   }
 
   return (
-    <SmoothScroll>
+    <LazyMotion features={domAnimation} strict>
+      <SmoothScroll>
       <LoadingScreen />
       <ScrollProgress />
       <AmbientBackground theme={content.theme} />
@@ -122,5 +124,6 @@ export function HomeContent({ content, featuredProjects }: HomeContentProps) {
         {t.showContact !== false && <Contact contact={content.contact} index={getIndex()} />}
       </main>
     </SmoothScroll>
+    </LazyMotion>
   )
 }

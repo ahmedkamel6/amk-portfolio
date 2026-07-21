@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { m as motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { Play, Pause, Clock, Clapperboard, Maximize2, Volume2, Settings } from 'lucide-react'
 import { SectionHeading } from '../SectionHeading'
 import type { ShowreelContent } from '@/lib/portfolio/default-content'
@@ -103,6 +103,7 @@ export function Showreel({ showreel, index = '01' }: { showreel: ShowreelContent
           {sr.videoUrl ? (
             <video
               src={sr.videoUrl}
+              preload="none"
               className="absolute inset-0 h-full w-full object-cover"
               autoPlay={playing}
               loop

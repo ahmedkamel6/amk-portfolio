@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m as motion, useInView } from 'framer-motion'
 import { SectionHeading } from '../SectionHeading'
 import { DynamicIcon } from '../DynamicIcon'
 import type { WorkflowStep } from '@/lib/portfolio/default-content'
