@@ -176,26 +176,9 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
           </TextReveal>
           {/* Highlight line with glow + shimmer */}
           <span className="relative block">
-            <TextReveal as="span" delay={1.0} className="text-gradient-emerald text-glow block" ssrVisible>
+            <TextReveal as="span" delay={1.0} className="text-gradient-emerald block" ssrVisible>
               {hero.nameHighlight}
             </TextReveal>
-            {/* Shimmer sweep */}
-            <motion.span
-              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%]"
-              initial={{ backgroundPosition: '200% 0' }}
-              animate={SHIMMER_ANIM}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: 'linear',
-                delay: 0.5,
-              }}
-              style={{
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            />
           </span>
         </h1>
 
