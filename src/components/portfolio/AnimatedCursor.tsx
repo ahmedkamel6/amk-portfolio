@@ -54,13 +54,12 @@ export function AnimatedCursor() {
     const move = (e: MouseEvent) => {
       mouseX.set(e.clientX)
       mouseY.set(e.clientY)
+    }
 
+    const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null
-      if (!target) {
-        setVariant('default')
-        setLabel('')
-        return
-      }
+      if (!target) return
+      
       const interactive = target.closest(
         'a, button, [role="button"], [data-cursor], input, textarea, select, [data-cursor-interactive]'
       ) as HTMLElement | null
@@ -91,11 +90,13 @@ export function AnimatedCursor() {
     // Touch handler — only called from event, not in effect body
     const handleTouch = () => setTouchDetected(true)
 
-    window.addEventListener('mousemove', move)
-    document.addEventListener('mouseleave', leave)
-    window.addEventListener('touchstart', handleTouch, { once: true })
+    window.addEventListener('mousemove', move, { passive: true })
+    document.addEventListener('mouseover', handleMouseOver, { passive: true })
+    document.addEventListener('mouseleave', leave, { passive: true })
+    window.addEventListener('touchstart', handleTouch, { once: true, passive: true })
     return () => {
       window.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseover', handleMouseOver)
       document.removeEventListener('mouseleave', leave)
       window.removeEventListener('touchstart', handleTouch)
     }

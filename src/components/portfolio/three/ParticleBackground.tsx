@@ -114,31 +114,7 @@ function GridLines({ accentColor = '#00D084', isMobile = false }: { accentColor?
   )
 }
 
-function MouseLight({ color = '#00D084', isMobile = false }: { color?: string; isMobile?: boolean }) {
-  const ref = useRef<THREE.PointLight>(null)
 
-  useFrame((state) => {
-    if (!ref.current) return
-    if (isMobile) {
-      ref.current.position.lerp(new THREE.Vector3(0, 0, 4), 0.02)
-    } else {
-      const x = (state.pointer.x * 6)
-      const y = (state.pointer.y * 4)
-      ref.current.position.lerp(new THREE.Vector3(x, y, 4), 0.05)
-    }
-  })
-
-  return (
-    <pointLight
-      ref={ref}
-      position={[0, 0, 4]}
-      color={color}
-      intensity={isMobile ? 2 : 4}
-      distance={20}
-      decay={2}
-    />
-  )
-}
 
 export function ParticleBackground({
   particleCount = 600,
@@ -154,18 +130,13 @@ export function ParticleBackground({
   const isMobile = useIsMobile()
 
   return (
-    <div className="absolute inset-0 h-full w-full" aria-hidden>
+    <div className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 60 }}
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
-        }}
-        dpr={isMobile ? [1, 1] : [1, 2]}
+        camera={{ position: [0, 0, 15], fov: 45 }}
+        dpr={typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2) : 1}
+        gl={{ alpha: true, antialias: false, powerPreference: 'high-performance' }}
       >
         <ambientLight intensity={mode === 'dark' ? (isMobile ? 0.2 : 0.4) : (isMobile ? 0.6 : 0.8)} />
-        <MouseLight color={accent} isMobile={isMobile} />
         <Particles count={isMobile ? Math.floor(particleCount / 3) : particleCount} accentColor={accent} isMobile={isMobile} />
         <GridLines accentColor={accent} isMobile={isMobile} />
         <fog attach="fog" args={[background, 8, 25]} />
