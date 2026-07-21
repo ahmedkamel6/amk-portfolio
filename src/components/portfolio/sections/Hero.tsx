@@ -295,7 +295,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
             <motion.div
               className="absolute inset-x-0 top-0 h-1/2 bg-emerald-glow"
               animate={SCROLL_CUE_ANIM}
-              transition={{ duration: isMobile ? 6 : 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
               style={{ willChange: 'transform' }}
             />
           </div>
