@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Play } from 'lucide-react'
 import type { Project } from '@/lib/portfolio/default-content'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -79,7 +80,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
           {/* Static Cover/Gradient */}
           <div className={`absolute inset-0 h-full w-full bg-gradient-to-br ${project.gradient}`}>
             {posterUrl && (
-              <img src={posterUrl} alt={project.title} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-80" />
+              <Image src={posterUrl} alt={project.title} fill sizes="(max-width: 640px) 50vw, 280px" quality={60} className="object-cover opacity-80" />
             )}
           </div>
 
@@ -145,7 +146,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
                   if (logoInfo?.imageUrl) {
                     return (
                       <div key={t} title={t} className="h-6 w-6 rounded border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center overflow-hidden shrink-0">
-                        <img src={logoInfo.imageUrl} alt={t} className="h-4 w-4 object-contain" />
+                        <Image src={logoInfo.imageUrl} alt={t} width={16} height={16} className="object-contain" />
                       </div>
                     )
                   }

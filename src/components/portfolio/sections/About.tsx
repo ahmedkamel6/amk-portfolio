@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion'
 import { SectionHeading } from '../SectionHeading'
 import type { AboutContent } from '@/lib/portfolio/default-content'
 import { Play } from 'lucide-react'
+import Image from 'next/image'
 
 // Helper to convert Google Drive share links to preview links
 function getDriveIframeUrl(url: string) {
@@ -50,12 +51,13 @@ export function About({ about, index = '03' }: { about: AboutContent, index?: st
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
             className="relative mx-auto w-full max-w-sm overflow-hidden rounded-2xl border border-[var(--border)] bg-gradient-to-b from-[#0d0f14] to-[#3a4559] shadow-xl aspect-[4/5]"
           >
-            <img 
+            <Image 
               src={about.imageUrl || '/default-avatar.png'} 
               alt="Ahmed Kamel Profile"
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+              fill
+              sizes="(max-width: 768px) 100vw, 384px"
+              quality={80}
+              className="object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-50" />
             <div className="absolute inset-0 ring-1 ring-inset ring-white/10 pointer-events-none rounded-2xl" />
@@ -119,11 +121,11 @@ export function About({ about, index = '03' }: { about: AboutContent, index?: st
             <>
               {/* Thumbnail - Green Logo */}
               <div className="absolute inset-0 bg-[#0A0A0A] flex items-center justify-center">
-                <img 
+                <Image 
                   src="/icon.png" 
                   alt="Video Thumbnail"
-                  loading="lazy"
-                  decoding="async"
+                  width={192}
+                  height={192}
                   className="h-32 md:h-48 w-auto object-contain opacity-50 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-70"
                 />
               </div>

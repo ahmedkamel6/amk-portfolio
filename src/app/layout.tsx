@@ -1,23 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Syne, Space_Grotesk } from "next/font/google";
+import { Syne, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeApplier } from "@/components/portfolio/ThemeApplier";
-import { PerformanceProvider } from "@/components/portfolio/PerformanceProvider";
 import { getAppearance } from "@/lib/portfolio/db";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const syne = Syne({
   variable: "--font-display",
@@ -117,28 +105,13 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <head>
-        {/* Google Analytics */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-R85C6ZG3EW"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-R85C6ZG3EW');
-            `,
-          }}
-        />
-      </head>
+      <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground theme-transition`}
+        className={`${syne.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground`}
       >
         <ThemeApplier theme={theme} />
-        <PerformanceProvider>
-          {children}
-          <Toaster />
-        </PerformanceProvider>
+        {children}
+        <Toaster />
         {/* JSON-LD structured data */}
         <script
           type="application/ld+json"
@@ -157,8 +130,19 @@ export default async function RootLayout({
             }),
           }}
         />
-        
-
+        {/* Google Analytics — loaded after page is interactive (non-blocking) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-R85C6ZG3EW"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-R85C6ZG3EW');
+          `}
+        </Script>
       </body>
     </html>
   );

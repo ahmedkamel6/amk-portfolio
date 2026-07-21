@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 /**
  * Lightweight loading screen — shows the original logo immediately
@@ -30,10 +31,12 @@ export function LoadingScreen() {
         <div className="ls-glow" />
 
         {/* Original logo — appears immediately with fade-in */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="/logo.png"
           alt=""
+          fill
+          priority
+          sizes="280px"
           className="ls-logo"
         />
       </div>
@@ -59,8 +62,7 @@ export function LoadingScreen() {
           pointer-events: none;
         }
         .ls-logo {
-          position: absolute; inset: 0; width: 100%; height: 100%;
-          object-fit: contain;
+          object-fit: contain !important;
           filter: brightness(0) saturate(100%) invert(52%) sepia(11%) saturate(871%) hue-rotate(170deg) brightness(91%) contrast(87%);
           drop-shadow: 0 0 15px rgba(255,255,255,0.1);
         }

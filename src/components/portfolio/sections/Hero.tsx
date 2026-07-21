@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, Suspense, lazy } from 'react'
+import { memo, Suspense } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { ArrowDown, Sparkles } from 'lucide-react'
@@ -8,9 +8,11 @@ import { MagneticButton } from '../MagneticButton'
 import { TextReveal } from '../TextReveal'
 import { useIsMobile } from '@/hooks/use-mobile'
 import type { HeroContent, ThemeSettings } from '@/lib/portfolio/default-content'
+import dynamic from 'next/dynamic'
 
-const ParticleBackground = lazy(() =>
-  import('../three/ParticleBackground').then((m) => ({ default: m.ParticleBackground }))
+const ParticleBackground = dynamic(
+  () => import('../three/ParticleBackground').then((m) => ({ default: m.ParticleBackground })),
+  { ssr: false }
 )
 
 const ORB_1_ANIM = { y: [0, -30, 0], x: [0, 20, 0] }

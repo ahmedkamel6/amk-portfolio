@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 import type { ThemeSettings } from '@/lib/portfolio/default-content'
@@ -80,9 +81,12 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
                 />
               </filter>
             </svg>
-            <img
+            <Image
               src="/logo.png"
               alt="Ahmed Kamel Logo"
+              width={120}
+              height={36}
+              priority
               style={{ filter: 'url(#iceBlueColorize)' }}
               className="h-8 md:h-9 w-auto object-contain transition-transform duration-300 hover:scale-105"
             />
