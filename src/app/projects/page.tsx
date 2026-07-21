@@ -1,4 +1,4 @@
-import { getProjects, getSiteContent } from '@/lib/portfolio/db'
+import { getSiteContent } from '@/lib/portfolio/db'
 import { ProjectCard } from '@/components/portfolio/ProjectCard'
 import { SectionHeading } from '@/components/portfolio/SectionHeading'
 import { Navigation } from '@/components/portfolio/sections/Navigation'
@@ -11,8 +11,8 @@ export const metadata = {
 }
 
 export default async function ProjectsPage() {
-  const projects = await getProjects()
   const content = await getSiteContent()
+  const projects = content.projects
   const t = content.theme
   
   // Categorization Logic

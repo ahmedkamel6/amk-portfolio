@@ -2,13 +2,20 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { db } from '@/lib/db'
-import { getProjectBySlug, getRelatedProjects, getToolLogos } from '@/lib/portfolio/db'
+import { getProjectBySlug, getRelatedProjects, getToolLogos, getProjects } from '@/lib/portfolio/db'
 import { ProjectDetailPage } from '@/components/portfolio/ProjectDetailPage'
 
 export const revalidate = 60
 
 interface PageProps {
   params: Promise<{ slug: string }>
+}
+
+export async function generateStaticParams() {
+  const projects = await getProjects()
+  return projects.map((p) => ({
+    slug: p.slug,
+  }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

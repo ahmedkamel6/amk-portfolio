@@ -1,4 +1,6 @@
 import { db } from '@/lib/db'
+import { cache } from 'react'
+import { unstable_cache } from 'next/cache'
 import type {
   HeroContent,
   ShowreelContent,
@@ -15,10 +17,10 @@ import type {
 /**
  * Data access layer.
  * All reads from the public site go through these functions.
- * Returns typed shapes matching the existing component interfaces.
+ * Wrapped in React.cache() to deduplicate queries within the same render cycle.
  */
 
-export async function getHero(): Promise<HeroContent> {
+const _getHero = async (): Promise<HeroContent> => {
   const row = await db.heroContent.findUnique({ where: { id: 'singleton' } })
   if (!row) throw new Error('Hero content not seeded')
   return {
@@ -33,7 +35,7 @@ export async function getHero(): Promise<HeroContent> {
   }
 }
 
-export async function getShowreel(): Promise<ShowreelContent> {
+const _getShowreel = async (): Promise<ShowreelContent> => {
   const row = await db.showreelContent.findUnique({ where: { id: 'singleton' } })
   if (!row) {
     return {
@@ -60,7 +62,7 @@ export async function getShowreel(): Promise<ShowreelContent> {
   }
 }
 
-export async function getServices(): Promise<Service[]> {
+const _getServices = async (): Promise<Service[]> => {
   const rows = await db.service.findMany({ orderBy: { order: 'asc' } })
   return rows.map((r) => ({
     id: r.id,
@@ -84,7 +86,7 @@ export interface ProjectDetail extends Project {
   featured: boolean
 }
 
-export async function getProjects(): Promise<ProjectDetail[]> {
+const _getProjects = async (): Promise<ProjectDetail[]> => {
   const rows = await db.project.findMany({ orderBy: { order: 'asc' } })
   return rows.map((r) => ({
     id: r.id,
@@ -109,12 +111,12 @@ export async function getProjects(): Promise<ProjectDetail[]> {
   }))
 }
 
-export async function getFeaturedProjects(): Promise<ProjectDetail[]> {
-  const all = await getProjects()
+const _getFeaturedProjects = async (): Promise<ProjectDetail[]> => {
+  const all = await _getProjects()
   return all.filter((p) => p.featured)
 }
 
-export async function getProjectBySlug(slug: string): Promise<ProjectDetail | null> {
+const _getProjectBySlug = async (slug: string): Promise<ProjectDetail | null> => {
   const r = await db.project.findUnique({ where: { slug } })
   if (!r) return null
   return {
@@ -140,7 +142,7 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
   }
 }
 
-export async function getRelatedProjects(slug: string, category: string, limit = 3): Promise<ProjectDetail[]> {
+const _getRelatedProjects = async (slug: string, category: string, limit = 3): Promise<ProjectDetail[]> => {
   // First try same category
   let rows = await db.project.findMany({
     where: { category, slug: { not: slug }, featured: true },
@@ -180,7 +182,7 @@ export async function getRelatedProjects(slug: string, category: string, limit =
   }))
 }
 
-export async function getBeforeAfter(): Promise<BeforeAfterContent> {
+const _getBeforeAfter = async (): Promise<BeforeAfterContent> => {
   const row = await db.beforeAfterContent.findUnique({ where: { id: 'singleton' } })
   if (!row) throw new Error('BeforeAfter content not seeded')
   return {
@@ -192,7 +194,7 @@ export async function getBeforeAfter(): Promise<BeforeAfterContent> {
   }
 }
 
-export async function getWorkflow(): Promise<WorkflowStep[]> {
+const _getWorkflow = async (): Promise<WorkflowStep[]> => {
   const rows = await db.workflowStep.findMany({ orderBy: { order: 'asc' } })
   return rows.map((r) => ({
     id: r.id,
@@ -204,7 +206,7 @@ export async function getWorkflow(): Promise<WorkflowStep[]> {
   }))
 }
 
-export async function getSkills(): Promise<Skill[]> {
+const _getSkills = async (): Promise<Skill[]> => {
   const rows = await db.skill.findMany({ orderBy: { order: 'asc' } })
   return rows.map((r) => ({
     id: r.id,
@@ -216,7 +218,7 @@ export async function getSkills(): Promise<Skill[]> {
   }))
 }
 
-export async function getAboutContent() {
+const _getAboutContent = async () => {
   const row = await db.aboutContent.findUnique({
     where: { id: 'singleton' },
   })
@@ -231,7 +233,7 @@ export async function getAboutContent() {
   return row
 }
 
-export async function getTestimonials(): Promise<Testimonial[]> {
+const _getTestimonials = async (): Promise<Testimonial[]> => {
   const rows = await db.testimonial.findMany({ orderBy: { order: 'asc' } })
   return rows.map((r) => ({
     id: r.id,
@@ -244,7 +246,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   }))
 }
 
-export async function getContact(): Promise<ContactContent> {
+const _getContact = async (): Promise<ContactContent> => {
   const row = await db.contactInfo.findUnique({ where: { id: 'singleton' } })
   if (!row) throw new Error('Contact info not seeded')
   const channels = JSON.parse(row.channelsJson) as { id: string; iconName: string; label: string; handle: string; href: string }[]
@@ -261,7 +263,7 @@ export async function getContact(): Promise<ContactContent> {
   }
 }
 
-export async function getAppearance(): Promise<ThemeSettings> {
+const _getAppearance = async (): Promise<ThemeSettings> => {
   const row = await db.appearanceSettings.findUnique({ where: { id: 'singleton' } })
   if (!row) throw new Error('Appearance settings not seeded')
   return {
@@ -291,7 +293,7 @@ export async function getAppearance(): Promise<ThemeSettings> {
   }
 }
 
-export async function getToolLogos() {
+const _getToolLogos = async () => {
   const rows = await db.toolLogo.findMany()
   return rows.map((r) => ({
     id: r.id,
@@ -300,15 +302,57 @@ export async function getToolLogos() {
   }))
 }
 
+// -----------------------------------------------------------------------------
+// EXPORTS (WRAPPED IN REACT.CACHE)
+// Deduplicates identical queries executed in the same request/render pass.
+// -----------------------------------------------------------------------------
 
-/** Fetch all site content in parallel — used by the home page server component */
-export async function getSiteContent() {
-  const [
-    hero, showreel, services, projects, beforeAfter,
-    workflow, skills, about, testimonials, contact, appearance, toolLogos
-  ] = await Promise.all([
-    getHero(), getShowreel(), getServices(), getProjects(), getBeforeAfter(),
-    getWorkflow(), getSkills(), getAboutContent(), getTestimonials(), getContact(), getAppearance(), getToolLogos()
-  ])
-  return { hero, showreel, services, projects, beforeAfter, workflow, skills, about, testimonials, contact, theme: appearance, toolLogos }
+export const getHero = cache(_getHero)
+export const getShowreel = cache(_getShowreel)
+export const getServices = cache(_getServices)
+export const getProjects = cache(_getProjects)
+export const getFeaturedProjects = cache(_getFeaturedProjects)
+export const getProjectBySlug = cache(_getProjectBySlug)
+export const getRelatedProjects = cache(_getRelatedProjects)
+export const getBeforeAfter = cache(_getBeforeAfter)
+export const getWorkflow = cache(_getWorkflow)
+export const getSkills = cache(_getSkills)
+export const getAboutContent = cache(_getAboutContent)
+export const getTestimonials = cache(_getTestimonials)
+export const getContact = cache(_getContact)
+export const getAppearance = cache(_getAppearance)
+export const getToolLogos = cache(_getToolLogos)
+
+/** 
+ * Fetch all site content. 
+ * Sequential execution limits connection usage to exactly 1 database connection 
+ * at a time, preventing Neon from hitting connection limits during build.
+ */
+const _getSiteContent = async () => {
+  const hero = await _getHero()
+  const showreel = await _getShowreel()
+  const services = await _getServices()
+  const projects = await _getProjects()
+  const beforeAfter = await _getBeforeAfter()
+  const workflow = await _getWorkflow()
+  const skills = await _getSkills()
+  const about = await _getAboutContent()
+  const testimonials = await _getTestimonials()
+  const contact = await _getContact()
+  const appearance = await _getAppearance()
+  const toolLogos = await _getToolLogos()
+  
+  return { 
+    hero, showreel, services, projects, beforeAfter, 
+    workflow, skills, about, testimonials, contact, 
+    theme: appearance, toolLogos 
+  }
 }
+
+// Wrap getSiteContent in unstable_cache for cross-worker sharing
+// since it represents the global layout content and rarely changes.
+export const getSiteContent = unstable_cache(
+  _getSiteContent,
+  ['global-site-content'],
+  { revalidate: 60, tags: ['site-content'] }
+)
