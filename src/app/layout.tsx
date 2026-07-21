@@ -1,11 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono, Syne, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeApplier } from "@/components/portfolio/ThemeApplier";
 import { getAppearance } from "@/lib/portfolio/db";
 
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const syne = Syne({
   variable: "--font-display",
@@ -107,7 +119,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning className="dark">
       <head />
       <body
-        className={`${syne.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground`}
       >
         <ThemeApplier theme={theme} />
         {children}
