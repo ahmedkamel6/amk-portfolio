@@ -3,11 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string; type: string }> }
 ) {
   try {
-    const { slug } = await params
-    const type = request.nextUrl.searchParams.get('type')
+    const { slug, type } = await params
 
     const project = await db.project.findUnique({
       where: { slug },

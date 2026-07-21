@@ -5,7 +5,6 @@ import { m as motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowDown, Sparkles } from 'lucide-react'
 import { MagneticButton } from '../MagneticButton'
 import { TextReveal } from '../TextReveal'
-import { useIsMobile } from '@/hooks/use-mobile'
 import type { HeroContent, ThemeSettings } from '@/lib/portfolio/default-content'
 import dynamic from 'next/dynamic'
 
@@ -21,20 +20,29 @@ const SCROLL_CUE_ANIM = { y: ['-50%', '150%'] }
 
 export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; theme: Pick<ThemeSettings, 'background' | 'accent' | 'accentSoft' | 'particleCount' | 'mode'> }) {
   const ref = useRef<HTMLElement>(null)
-  const isMobile = useIsMobile()
   const [loadParticles, setLoadParticles] = useState(false)
 
   useEffect(() => {
-    if (isMobile) return // Never load particles on mobile
-    
-    // Defer heavy Three.js init until browser is completely idle
-    const initParticles = () => setLoadParticles(true)
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(initParticles, { timeout: 2000 })
-    } else {
-      setTimeout(initParticles, 1500)
+    if (typeof window === 'undefined' || window.matchMedia('(max-width: 767px)').matches) {
+      return;
     }
-  }, [isMobile])
+    
+    let idleId: number;
+    let timeoutId: NodeJS.Timeout;
+    
+    const initParticles = () => setLoadParticles(true)
+    
+    if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(initParticles, { timeout: 2000 })
+    } else {
+      timeoutId = setTimeout(initParticles, 1500)
+    }
+    
+    return () => {
+      if (idleId && 'cancelIdleCallback' in window) window.cancelIdleCallback(idleId)
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [])
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -75,18 +83,18 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
         />
         <div className="pointer-events-none absolute inset-0 bg-radial-spotlight" />
         {/* Film grain overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-noise opacity-30" />
+        <div className="pointer-events-none absolute inset-0 hidden md:block bg-noise opacity-30" />
       </div>
 
       {/* Floating ambient orbs */}
       <motion.div
-        className={`pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full ${isMobile ? 'opacity-15 blur-lg' : 'opacity-30 blur-3xl'}`}
+        className="pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full opacity-15 blur-md md:opacity-30 md:blur-3xl"
         style={{ background: 'radial-gradient(circle, var(--emerald-glow), transparent 70%)', willChange: 'transform' }}
         animate={ORB_1_ANIM}
-        transition={{ duration: isMobile ? 36 : 12, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className={`pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full hidden md:block opacity-20 blur-3xl`}
+        className="pointer-events-none absolute right-0 top-1/4 h-96 w-96 rounded-full hidden md:block opacity-20 blur-3xl"
         style={{ background: 'radial-gradient(circle, var(--accent-soft), transparent 70%)', willChange: 'transform' }}
         animate={ORB_2_ANIM}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
@@ -177,7 +185,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
               initial={{ backgroundPosition: '200% 0' }}
               animate={SHIMMER_ANIM}
               transition={{
-                duration: isMobile ? 16 : 4,
+                duration: 8,
                 repeat: Infinity,
                 ease: 'linear',
                 delay: 0.5,

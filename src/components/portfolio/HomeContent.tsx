@@ -1,34 +1,23 @@
-'use client'
-
 import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/portfolio/sections/Navigation'
 import { Hero } from '@/components/portfolio/sections/Hero'
 import type { SiteContent, Project } from '@/lib/portfolio/default-content'
-import { LazyMotion } from 'framer-motion'
-
-const loadFeatures = () => import('framer-motion').then(res => res.domAnimation)
+import { HomeProviders } from './HomeProviders'
 
 // ─── Lazy-loaded wrappers (below the fold) ───
 // These are dynamically imported with ssr:false so they don't bloat the initial JS bundle.
 
-const SmoothScroll = dynamic(
-  () => import('@/components/portfolio/SmoothScroll').then(m => ({ default: m.SmoothScroll })),
-  { ssr: false }
-)
-
 const ScrollProgress = dynamic(
-  () => import('@/components/portfolio/ScrollProgress').then(m => ({ default: m.ScrollProgress })),
-  { ssr: false }
+  () => import('@/components/portfolio/ScrollProgress').then(m => ({ default: m.ScrollProgress }))
 )
 
 const AmbientBackground = dynamic(
-  () => import('@/components/portfolio/AmbientBackground').then(m => ({ default: m.AmbientBackground })),
-  { ssr: false }
+  () => import('@/components/portfolio/AmbientBackground').then(m => ({ default: m.AmbientBackground }))
 )
 
 const Showreel = dynamic(
   () => import('@/components/portfolio/sections/Showreel').then(m => ({ default: m.Showreel })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const Services = dynamic(
@@ -101,8 +90,7 @@ export function HomeContent({ content, featuredProjects }: HomeContentProps) {
   }
 
   return (
-    <LazyMotion features={loadFeatures} strict>
-      <SmoothScroll>
+    <HomeProviders>
       <ScrollProgress />
       <AmbientBackground theme={content.theme} />
       <Navigation theme={content.theme} />
@@ -119,7 +107,6 @@ export function HomeContent({ content, featuredProjects }: HomeContentProps) {
         {t.showTestimonials !== false && <Testimonials testimonials={content.testimonials} index={getIndex()} />}
         {t.showContact !== false && <Contact contact={content.contact} index={getIndex()} />}
       </main>
-    </SmoothScroll>
-    </LazyMotion>
+    </HomeProviders>
   )
 }
