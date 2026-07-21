@@ -109,7 +109,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
         style={{ opacity: cornerOpacity }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.8, duration: 0.8 }}
+        transition={{ delay: 0.8, duration: 0.8 }}
         className="pointer-events-none absolute left-6 top-24 z-20 hidden md:block"
       >
         <div className="flex items-center gap-2 font-mono-display text-[10px] uppercase tracking-[0.3em] text-emerald-glow/40">
@@ -121,7 +121,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
         style={{ opacity: cornerOpacity }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.8, duration: 0.8 }}
+        transition={{ delay: 0.8, duration: 0.8 }}
         className="pointer-events-none absolute right-6 top-24 z-20 hidden md:block"
       >
         <div className="flex flex-col items-end gap-1 font-mono-display text-[10px] uppercase tracking-[0.3em] text-[var(--text-muted)]">
@@ -180,7 +180,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
                 duration: isMobile ? 16 : 4,
                 repeat: Infinity,
                 ease: 'linear',
-                delay: 2,
+                delay: 0.5,
               }}
               style={{
                 WebkitBackgroundClip: 'text',
@@ -204,7 +204,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
                 className="font-medium tracking-wide"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.6 + i * 0.1, duration: 0.5 }}
+                transition={{ delay: 0.4 + i * 0.1, duration: 0.5 }}
               >
                 {role}
               </motion.span>
@@ -213,7 +213,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
                   className="h-1 w-1 rounded-full bg-emerald-glow/60"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 1.7 + i * 0.1, duration: 0.3 }}
+                  transition={{ delay: 0.5 + i * 0.1, duration: 0.3 }}
                 />
               )}
             </span>
@@ -225,7 +225,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
           className="mt-12 flex flex-col items-center gap-6 sm:flex-row"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.9 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
         >
           <MagneticButton
             as="a"
@@ -248,7 +248,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
           className="mt-20 flex items-center divide-x divide-[var(--border)]"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2.2 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
         >
           {hero.stats.map((stat, i) => (
             <div
@@ -259,7 +259,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
                 className="font-display text-2xl font-bold text-[var(--text-primary)] md:text-3xl"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.3 + i * 0.1, duration: 0.5 }}
+                transition={{ delay: 0.9 + i * 0.1, duration: 0.5 }}
               >
                 {stat.value}
               </motion.span>
@@ -277,7 +277,7 @@ export const Hero = memo(function Hero({ hero, theme }: { hero: HeroContent; the
         style={{ opacity, willChange: 'transform' }}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2.5, duration: 0.8 }}
+        transition={{ delay: 1.0, duration: 0.8 }}
       >
         <div className="flex flex-col items-center gap-3">
           <span className="font-mono-display text-[9px] uppercase tracking-[0.4em] text-[var(--text-muted)]">

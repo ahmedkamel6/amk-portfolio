@@ -4,18 +4,15 @@ import dynamic from 'next/dynamic'
 import { Navigation } from '@/components/portfolio/sections/Navigation'
 import { Hero } from '@/components/portfolio/sections/Hero'
 import type { SiteContent, Project } from '@/lib/portfolio/default-content'
-import { LazyMotion, domAnimation } from 'framer-motion'
+import { LazyMotion } from 'framer-motion'
+
+const loadFeatures = () => import('framer-motion').then(res => res.domAnimation)
 
 // ─── Lazy-loaded wrappers (below the fold) ───
 // These are dynamically imported with ssr:false so they don't bloat the initial JS bundle.
 
 const SmoothScroll = dynamic(
   () => import('@/components/portfolio/SmoothScroll').then(m => ({ default: m.SmoothScroll })),
-  { ssr: false }
-)
-
-const LoadingScreen = dynamic(
-  () => import('@/components/portfolio/LoadingScreen').then(m => ({ default: m.LoadingScreen })),
   { ssr: false }
 )
 
@@ -36,42 +33,42 @@ const Showreel = dynamic(
 
 const Services = dynamic(
   () => import('@/components/portfolio/sections/Services').then(m => ({ default: m.Services })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const FeaturedProjects = dynamic(
   () => import('@/components/portfolio/sections/FeaturedProjects').then(m => ({ default: m.FeaturedProjects })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const BeforeAfter = dynamic(
   () => import('@/components/portfolio/sections/BeforeAfter').then(m => ({ default: m.BeforeAfter })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const Workflow = dynamic(
   () => import('@/components/portfolio/sections/Workflow').then(m => ({ default: m.Workflow })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const Skills = dynamic(
   () => import('@/components/portfolio/sections/Skills').then(m => ({ default: m.Skills })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const About = dynamic(
   () => import('@/components/portfolio/sections/About').then(m => ({ default: m.About })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const Testimonials = dynamic(
   () => import('@/components/portfolio/sections/Testimonials').then(m => ({ default: m.Testimonials })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 const Contact = dynamic(
   () => import('@/components/portfolio/sections/Contact').then(m => ({ default: m.Contact })),
-  { ssr: false, loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> }
 )
 
 // Lightweight placeholder while sections load
@@ -104,9 +101,8 @@ export function HomeContent({ content, featuredProjects }: HomeContentProps) {
   }
 
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadFeatures} strict>
       <SmoothScroll>
-      <LoadingScreen />
       <ScrollProgress />
       <AmbientBackground theme={content.theme} />
       <Navigation theme={content.theme} />

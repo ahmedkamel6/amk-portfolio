@@ -50,7 +50,7 @@ export function Navigation({ theme }: { theme: ThemeSettings }) {
         className="fixed inset-x-0 top-0 z-[9990] flex justify-center px-4 pt-4 pointer-events-none"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 2.6 }}
+        transition={{ duration: 0.6, delay: 0.6 }}
       >
         <motion.nav
           className="flex items-center justify-between gap-6 rounded-full px-6 py-3 transition-all duration-500 pointer-events-auto"
