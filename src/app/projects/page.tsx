@@ -10,6 +10,8 @@ export const metadata = {
   description: 'A curated selection of cinematic cuts and motion design — optimized for the feed.',
 }
 
+export const revalidate = 60
+
 export default async function ProjectsPage() {
   const content = await getSiteContent()
   const projects = content.projects

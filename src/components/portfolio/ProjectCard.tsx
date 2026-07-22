@@ -60,7 +60,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
   }
 
 
-  const isYouTube = directVideoUrl?.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/);
+  const isYouTube = typeof directVideoUrl === 'string' && directVideoUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/);
 
   return (
     <motion.article
@@ -143,7 +143,7 @@ export function ProjectCard({ project, index, toolLogos, inCarousel = false }: {
               
               <div className="flex flex-wrap gap-1.5 mb-2">
                 {project.toolsUsed.slice(0, 4).map((t) => {
-                  const logoInfo = toolLogos?.find((tl) => tl.name.toLowerCase() === t.toLowerCase())
+                  const logoInfo = toolLogos?.find((tl) => tl.name?.toLowerCase() === t?.toLowerCase())
                   if (logoInfo?.imageUrl) {
                     return (
                       <div key={t} title={t} className="h-6 w-6 rounded border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center overflow-hidden shrink-0">

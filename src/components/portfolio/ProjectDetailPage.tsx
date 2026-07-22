@@ -54,7 +54,7 @@ export function ProjectDetailPage({
       </h3>
       <div className="mt-4 flex flex-wrap gap-2">
         {project.toolsUsed.map((tool) => {
-          const logoInfo = toolLogos?.find((tl) => tl.name.toLowerCase() === tool.toLowerCase())
+          const logoInfo = toolLogos?.find((tl) => tl.name?.toLowerCase() === tool?.toLowerCase())
           if (logoInfo?.imageUrl) {
             return (
               <div key={tool} className="flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--surface-strong)] px-2.5 py-1">
