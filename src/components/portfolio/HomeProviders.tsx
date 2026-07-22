@@ -13,10 +13,8 @@ const SmoothScroll = dynamic(
 
 export function HomeProviders({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={loadFeatures} strict>
-      <SmoothScroll>
-        {children}
-      </SmoothScroll>
-    </LazyMotion>
+    <SmoothScroll>
+      {children}
+    </SmoothScroll>
   )
 }

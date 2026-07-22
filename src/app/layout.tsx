@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeApplier } from "@/components/portfolio/ThemeApplier";
 import { getAppearance } from "@/lib/portfolio/db";
+import { GlobalAnimationProvider } from "@/components/portfolio/GlobalAnimationProvider";
 
 
 const geistSans = Geist({
@@ -120,7 +121,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground`}
       >
         <ThemeApplier theme={theme} />
-        {children}
+        <GlobalAnimationProvider>
+          {children}
+        </GlobalAnimationProvider>
         <Toaster />
         {/* JSON-LD structured data */}
         <script
