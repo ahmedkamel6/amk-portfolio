@@ -149,10 +149,18 @@ const _getRelatedProjects = async (slug: string, category: string, limit = 3): P
     orderBy: { order: 'asc' },
     take: limit,
   })
-  // Fallback: any other featured project
+  // Fallback 1: same category, not featured
   if (rows.length === 0) {
     rows = await db.project.findMany({
-      where: { slug: { not: slug }, featured: true },
+      where: { category, slug: { not: slug } },
+      orderBy: { order: 'asc' },
+      take: limit,
+    })
+  }
+  // Fallback 2: any project
+  if (rows.length === 0) {
+    rows = await db.project.findMany({
+      where: { slug: { not: slug } },
       orderBy: { order: 'asc' },
       take: limit,
     })

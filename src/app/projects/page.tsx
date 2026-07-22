@@ -16,9 +16,9 @@ export default async function ProjectsPage() {
   const t = content.theme
   
   // Categorization Logic
-  const archive3d = projects.filter(p => p.category?.toLowerCase().includes('3d') || p.category?.toLowerCase().includes('blender'))
-  const archiveTimeline = projects.filter(p => p.category?.toLowerCase().includes('timeline') || p.category?.toLowerCase().includes('long'))
-  const archiveReels = projects.filter(p => !archive3d.includes(p) && !archiveTimeline.includes(p))
+  const archive3d = projects.filter(p => p.category?.toLowerCase()?.includes('3d') || p.category?.toLowerCase()?.includes('blender'))
+  const archiveTimeline = projects.filter(p => p.category?.toLowerCase()?.includes('timeline') || p.category?.toLowerCase()?.includes('long'))
+  const archiveReels = projects.filter(p => !archive3d.some(a => a.id === p.id) && !archiveTimeline.some(a => a.id === p.id))
   
   return (
     <SmoothScroll>
